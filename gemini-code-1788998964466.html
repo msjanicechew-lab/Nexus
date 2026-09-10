@@ -1,0 +1,2130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NEXUS: THE GLASS OFFICE — Student Companion</title>
+    <style>
+        :root {
+            --bg-deep: #07090e;
+            --bg-surface: #101622;
+            --bg-card: rgba(20, 28, 45, 0.75);
+            --bg-glass: rgba(255, 255, 255, 0.03);
+            --gold-primary: #c5a059;
+            --gold-bright: #e5c158;
+            --gold-dim: rgba(197, 160, 89, 0.25);
+            --text-main: #f4f4f6;
+            --text-muted: #9ba3b4;
+            --border-subtle: rgba(197, 160, 89, 0.18);
+            --border-highlight: rgba(197, 160, 89, 0.5);
+            --shadow-cinematic: 0 12px 32px rgba(0, 0, 0, 0.6);
+            --radius-main: 12px;
+            --font-serif: Georgia, 'Cinzel', 'Playfair Display', serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            background-image: 
+                radial-gradient(circle at 50% 0%, #172033 0%, transparent 75%),
+                radial-gradient(circle at 80% 80%, #0d121c 0%, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            font-size: 16px;
+            line-height: 1.6;
+            padding-bottom: 40px;
+            min-height: 100vh;
+        }
+
+        /* Responsive Layout Container */
+        .app-container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        /* Top Progress Bar Header */
+        header.top-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(7, 9, 14, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 12px 16px;
+            margin: -16px -16px 24px -16px;
+        }
+
+        .top-bar-content {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .ep-title-display {
+            font-family: var(--font-serif);
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--gold-primary);
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .progress-strip {
+            display: flex;
+            gap: 4px;
+            justify-content: space-between;
+            align-items: center;
+            overflow-x: auto;
+            padding-bottom: 2px;
+        }
+
+        .strip-item {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 4px 6px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid transparent;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .strip-item.active {
+            color: var(--gold-bright);
+            border-color: var(--border-highlight);
+            background: rgba(197, 160, 89, 0.1);
+            font-weight: 600;
+        }
+
+        .strip-item.completed {
+            color: var(--gold-primary);
+            opacity: 0.9;
+        }
+
+        .strip-item.locked {
+            opacity: 0.35;
+        }
+
+        /* Glassmorphism Cards */
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-main);
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-cinematic);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        h1, h2, h3 {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .title-gold {
+            color: var(--gold-primary);
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            font-style: italic;
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: #d0d4dc;
+        }
+
+        /* Interactive Controls & Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label.field-label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--gold-primary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input[type="text"], textarea, select {
+            width: 100%;
+            background: rgba(10, 14, 22, 0.8);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 14px;
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            font-size: 1rem;
+            transition: border-color 0.2s;
+            min-height: 44px;
+        }
+
+        input[type="text"]:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--gold-primary);
+            box-shadow: 0 0 8px rgba(197, 160, 89, 0.2);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* Custom Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 48px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #c5a059 0%, #9a7b3e 100%);
+            color: #07090e;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+            transition: all 0.2s ease;
+            margin-top: 12px;
+        }
+
+        .btn:hover, .btn:active {
+            filter: brightness(1.15);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--gold-primary);
+            background: rgba(197, 160, 89, 0.1);
+        }
+
+        /* Multiple Choice Options */
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .option-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            min-height: 52px;
+        }
+
+        .option-card:hover {
+            border-color: rgba(197, 160, 89, 0.4);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .option-card.selected {
+            border-color: var(--gold-primary);
+            background: rgba(197, 160, 89, 0.12);
+            box-shadow: inset 0 0 8px rgba(197, 160, 89, 0.15);
+        }
+
+        .option-card input[type="radio"], .option-card input[type="checkbox"] {
+            margin-top: 4px;
+            accent-color: var(--gold-primary);
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Likert Scale UI */
+        .likert-group {
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .likert-statement {
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+
+        .likert-options {
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+        }
+
+        .likert-btn {
+            flex: 1;
+            min-height: 44px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-muted);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4px;
+        }
+
+        .likert-btn.selected {
+            background: var(--gold-primary);
+            color: #07090e;
+            font-weight: bold;
+            border-color: var(--gold-bright);
+        }
+
+        /* Sliders */
+        .slider-group {
+            margin-bottom: 20px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            outline: none;
+            accent-color: var(--gold-primary);
+        }
+
+        /* Drag / Rank Ordering Controls */
+        .rank-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .rank-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            user-select: none;
+        }
+
+        .rank-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-rank {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .btn-rank:hover {
+            background: var(--gold-primary);
+            color: #000;
+        }
+
+        /* Locked Screen UI */
+        .locked-banner {
+            text-align: center;
+            padding: 32px 16px;
+        }
+
+        .lock-icon {
+            font-size: 2.5rem;
+            color: var(--gold-primary);
+            margin-bottom: 12px;
+        }
+
+        .scene-code-input {
+            max-width: 280px;
+            margin: 20px auto 0 auto;
+            text-align: center;
+            letter-spacing: 3px;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+        }
+
+        /* Replay & Collapsible Cards */
+        .accordion-item {
+            background: rgba(16, 22, 34, 0.8);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+            font-weight: 500;
+        }
+
+        .accordion-header:hover {
+            background: rgba(197, 160, 89, 0.05);
+        }
+
+        .accordion-body {
+            padding: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: none;
+            font-size: 0.9rem;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .accordion-body.open {
+            display: block;
+        }
+
+        .tag-box {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-protected { background: rgba(46, 117, 89, 0.25); color: #73e6b2; border: 1px solid rgba(46, 117, 89, 0.4); }
+        .tag-risked { background: rgba(168, 50, 50, 0.25); color: #ff9999; border: 1px solid rgba(168, 50, 50, 0.4); }
+        .tag-perspective { background: rgba(197, 160, 89, 0.25); color: var(--gold-bright); border: 1px solid var(--border-subtle); }
+
+        /* Finale Dramatic Screen */
+        .screen-finale-bg {
+            background: radial-gradient(circle at 50% 50%, #20170a 0%, #07090e 100%);
+            border: 1px solid var(--gold-primary);
+        }
+
+        /* Radar Chart Canvas Container */
+        .radar-container {
+            width: 100%;
+            max-width: 380px;
+            margin: 20px auto;
+            position: relative;
+        }
+
+        /* Starter Prompts Grid */
+        .starter-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .chip {
+            font-size: 0.8rem;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.2s;
+        }
+
+        .chip:hover {
+            border-color: var(--gold-primary);
+            color: var(--gold-bright);
+            background: rgba(197, 160, 89, 0.1);
+        }
+
+        /* Print Overlay & Formatting */
+        @media print {
+            body {
+                background: #fff !important;
+                color: #000 !important;
+            }
+            .top-bar, .btn, .starter-chips, .rank-controls, input[type="text"], textarea {
+                display: none !important;
+            }
+            .card {
+                background: #fff !important;
+                color: #000 !important;
+                border: 1px solid #ccc !important;
+                box-shadow: none !important;
+            }
+            h1, h2, h3, .title-gold, label.field-label {
+                color: #000 !important;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .toast-msg {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gold-primary);
+            color: #07090e;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            z-index: 1000;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Sticky Progress Navigation -->
+    <header class="top-bar" id="topBar">
+        <div class="top-bar-content">
+            <div class="ep-title-display">
+                <span id="topEpLabel">NEXUS COMPANION</span>
+                <span id="topSaveStatus" style="font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-sans);">AUTOSAVED</span>
+            </div>
+            <div class="progress-strip" id="progressStrip">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <!-- Main Dynamic Screen Viewport -->
+        <main id="mainView">
+            <!-- Screen Content Rendered via JS -->
+        </main>
+    </div>
+
+    <script>
+        // --- APP STATE & STORAGE MANAGEMENT ---
+        const LOCAL_STORAGE_KEY = 'NEXUS_GLASS_OFFICE_STATE_V1';
+
+        const DEFAULT_STATE = {
+            currentStep: 0, // 0: Opening, 1: Baseline, 2-11: Ep 1-10, 12: Finale, 13: Results
+            unlockedStep: 1, // Max step unlocked by student/codes
+            studentInfo: { name: '', group: '' },
+            baseline: {
+                personalValue: '',
+                beforeBeliefs: [3, 3, 3, 3, 3, 3],
+                afterBeliefs: [3, 3, 3, 3, 3, 3],
+                beliefChangeNote: ''
+            },
+            episodes: {
+                ep1: { choice: null, reflection: '' },
+                ep2: { slider1: 3, slider2: 3, slider3: 3, concerns: [], conclusion: null, cyoa: null, influences: [] },
+                ep3: { choice: null, prompt1: '', prompt2: '' },
+                ep4: { choice: null, ranking: ['career opportunity', 'fairness', 'loyalty', 'relationship with Daniel', 'relationship with management'] },
+                ep5: { choices: [], prompt1: '', prompt2: '' },
+                ep6: { choice: null, responsibility: null },
+                ep7: { choice: null, factors: [] },
+                ep8: { choice: null, prompt1: '', prompt2: '' },
+                ep9: { primary: null, secondary: null, prompt1: '', prompt2: '' },
+                ep10: { choice: null, influence: null },
+                finale: { ranking: ['Speak to Adrian', 'Respond to the confidential support channel', 'Check on Trifiny', 'Finish the project', 'Speak with Aisha', 'Leave and document everything first'] }
+            },
+            reflections: {
+                nexusNotes: '',
+                changeEpId: 'ep1',
+                changeReplayAction: '',
+                changeWhy: '',
+                actionStatement: ''
+            }
+        };
+
+        let state = loadState();
+
+        function loadState() {
+            try {
+                const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
+                return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(DEFAULT_STATE));
+            } catch (e) {
+                return JSON.parse(JSON.stringify(DEFAULT_STATE));
+            }
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(state));
+                showToast("Progress Saved");
+            } catch (e) {
+                console.error("Save failed", e);
+            }
+        }
+
+        function resetSimulation() {
+            if (confirm("Are you sure you want to restart the simulation? All saved choices and reflections will be cleared.")) {
+                localStorage.removeItem(LOCAL_STORAGE_KEY);
+                state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+                render();
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'toast-msg fade-in';
+            toast.innerText = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 1800);
+        }
+
+        // --- CONSTANTS & DATA ---
+        const SCENE_CODES = {
+            1: "NEXUS01",
+            2: "NEXUS02",
+            3: "NEXUS03",
+            4: "NEXUS04",
+            5: "NEXUS05",
+            6: "NEXUS06",
+            7: "NEXUS07",
+            8: "NEXUS08",
+            9: "NEXUS09",
+            10: "NEXUS10",
+            11: "NEXUSFINAL"
+        };
+
+        const BELIEF_STATEMENTS = [
+            "A good employee should follow instructions from senior staff.",
+            "Staying silent means staying neutral.",
+            "Professionalism means being available when work needs you.",
+            "If I witness unfair treatment, I should speak up.",
+            "Workplace friendships can affect professional judgement.",
+            "Power affects how a message is interpreted."
+        ];
+
+        // Dimension scoring definitions
+        const DIMENSIONS = [
+            "Professionalism",
+            "Judgement",
+            "Assertiveness",
+            "Boundaries",
+            "Relationship Awareness",
+            "Communication Adaptability",
+            "Conflict Navigation",
+            "Ethical Courage"
+        ];
+
+        // --- RENDER ROUTER ---
+        function render() {
+            updateHeader();
+            const mainView = document.getElementById('mainView');
+            mainView.innerHTML = '';
+            mainView.className = 'fade-in';
+
+            if (state.currentStep === 0) renderOpening(mainView);
+            else if (state.currentStep === 1) renderBaseline(mainView);
+            else if (state.currentStep >= 2 && state.currentStep <= 11) {
+                const epNum = state.currentStep - 1;
+                if (state.unlockedStep < state.currentStep) {
+                    renderLockedScreen(mainView, epNum);
+                } else {
+                    renderEpisode(mainView, epNum);
+                }
+            }
+            else if (state.currentStep === 12) {
+                if (state.unlockedStep < 12) {
+                    renderLockedScreen(mainView, 11);
+                } else {
+                    renderFinale(mainView);
+                }
+            }
+            else if (state.currentStep === 13) renderResults(mainView);
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // --- HEADER UI ---
+        function updateHeader() {
+            const topEpLabel = document.getElementById('topEpLabel');
+            const progressStrip = document.getElementById('progressStrip');
+            
+            if (state.currentStep === 0) {
+                topEpLabel.innerText = "NEXUS: THE GLASS OFFICE";
+            } else if (state.currentStep === 1) {
+                topEpLabel.innerText = "BEFORE-NEXUS BASELINE";
+            } else if (state.currentStep >= 2 && state.currentStep <= 11) {
+                topEpLabel.innerText = `EPISODE ${state.currentStep - 1} OF 10`;
+            } else if (state.currentStep === 12) {
+                topEpLabel.innerText = "FINALE";
+            } else {
+                topEpLabel.innerText = "WORKPLACE PROFILE";
+            }
+
+            // Render progress items 01 -> 10 + FINAL
+            progressStrip.innerHTML = '';
+            for (let i = 1; i <= 11; i++) {
+                const item = document.createElement('div');
+                const label = i <= 10 ? (i < 10 ? `0${i}` : '10') : 'FINAL';
+                const stepIndex = i + 1;
+
+                item.className = 'strip-item';
+                if (state.currentStep === stepIndex) item.classList.add('active');
+                else if (state.unlockedStep > stepIndex) item.classList.add('completed');
+                else item.classList.add('locked');
+
+                let content = label;
+                if (state.unlockedStep > stepIndex && i <= 10) {
+                    content += ' ✓';
+                }
+                item.innerText = content;
+                progressStrip.appendChild(item);
+            }
+        }
+
+        // --- SCREEN 0: OPENING ---
+        function renderOpening(container) {
+            container.innerHTML = `
+                <div class="card" style="text-align: center; padding: 36px 24px;">
+                    <h1 class="title-gold">NEXUS: THE GLASS OFFICE</h1>
+                    <p class="subtitle">Everyone is smiling. Everyone wants something.</p>
+                    <p style="font-size: 0.95rem; margin-bottom: 24px; color: var(--text-muted);">
+                        Your choices will shape your workplace communication profile.
+                    </p>
+
+                    <div class="form-group" style="text-align: left;">
+                        <label class="field-label">Name / Nickname (Optional)</label>
+                        <input type="text" id="inputName" value="${state.studentInfo.name}" placeholder="Enter your name">
+                    </div>
+
+                    <div class="form-group" style="text-align: left;">
+                        <label class="field-label">Class / Group (Optional)</label>
+                        <input type="text" id="inputGroup" value="${state.studentInfo.group}" placeholder="e.g. Section B / Group 3">
+                    </div>
+
+                    <div style="background: rgba(197, 160, 89, 0.08); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px; margin: 20px 0; font-size: 0.85rem; color: var(--gold-bright); text-align: left;">
+                        Note: There may not always be one perfect answer. Choose what you would genuinely do.
+                    </div>
+
+                    <button class="btn" id="btnBegin">BEGIN SIMULATION</button>
+                </div>
+            `;
+
+            document.getElementById('btnBegin').onclick = () => {
+                state.studentInfo.name = document.getElementById('inputName').value.trim();
+                state.studentInfo.group = document.getElementById('inputGroup').value.trim();
+                state.currentStep = 1;
+                saveState();
+                render();
+            };
+        }
+
+        // --- SCREEN 1: BASELINE ---
+        function renderBaseline(container) {
+            const values = [
+                { key: 'A', text: 'Being respected' },
+                { key: 'B', text: 'Being liked' },
+                { key: 'C', text: 'Doing excellent work' },
+                { key: 'D', text: 'Protecting my boundaries' },
+                { key: 'E', text: 'Building trustworthy relationships' },
+                { key: 'F', text: 'Doing what is right' }
+            ];
+
+            let html = `
+                <div class="card">
+                    <h2 class="title-gold">BEFORE-NEXUS BASELINE</h2>
+                    <p class="subtitle">Establishing your starting workplace baseline</p>
+
+                    <div class="form-group">
+                        <label class="field-label">Question 1 — Personal Value</label>
+                        <p style="font-size: 0.95rem;">What matters MOST to you when starting a new job?</p>
+                        <div class="options-grid">
+            `;
+
+            values.forEach(v => {
+                const sel = state.baseline.personalValue === v.key ? 'selected' : '';
+                html += `
+                    <div class="option-card ${sel}" onclick="selectBaselineValue('${v.key}')">
+                        <input type="radio" name="baseVal" ${sel ? 'checked' : ''}>
+                        <div><strong>${v.key}.</strong> ${v.text}</div>
+                    </div>
+                `;
+            });
+
+            html += `
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 32px;">
+                        <label class="field-label">Question 2 — Before-Nexus Belief Scale</label>
+                        <p style="font-size: 0.9rem; color: var(--text-muted);">Indicate your agreement (1 = Strongly Disagree, 5 = Strongly Agree)</p>
+            `;
+
+            BELIEF_STATEMENTS.forEach((stmt, idx) => {
+                const val = state.baseline.beforeBeliefs[idx] || 3;
+                html += `
+                    <div class="likert-group">
+                        <div class="likert-statement">${idx + 1}. ${stmt}</div>
+                        <div class="likert-options">
+                            ${[1,2,3,4,5].map(num => `
+                                <button class="likert-btn ${val === num ? 'selected' : ''}" onclick="setBaselineBelief(${idx}, ${num})">
+                                    ${num}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                    </div>
+                    <button class="btn" id="btnSaveBaseline">CONFIRM & CONTINUE</button>
+                </div>
+            `;
+
+            container.innerHTML = html;
+
+            document.getElementById('btnSaveBaseline').onclick = () => {
+                if (!state.baseline.personalValue) {
+                    alert('Please select what matters most to you in Question 1.');
+                    return;
+                }
+                state.currentStep = 2; // Episode 1
+                saveState();
+                render();
+            };
+        }
+
+        window.selectBaselineValue = function(key) {
+            state.baseline.personalValue = key;
+            renderBaseline(document.getElementById('mainView'));
+        };
+
+        window.setBaselineBelief = function(idx, score) {
+            state.baseline.beforeBeliefs[idx] = score;
+            renderBaseline(document.getElementById('mainView'));
+        };
+
+        // --- LOCKED SCREEN COMPONENT ---
+        function renderLockedScreen(container, episodeNum) {
+            const reqCode = SCENE_CODES[episodeNum];
+            container.innerHTML = `
+                <div class="card locked-banner">
+                    <div class="lock-icon">🔒</div>
+                    <h2 class="title-gold">DECISION RECORDED</h2>
+                    <p style="margin-top: 12px; color: var(--text-muted);">Wait for your instructor to unlock the next scene.</p>
+                    
+                    <div class="form-group" style="margin-top: 24px;">
+                        <label class="field-label">ENTER SCENE CODE</label>
+                        <input type="text" id="sceneCodeInput" class="scene-code-input" placeholder="XXXXXX" maxlength="10">
+                    </div>
+                    <button class="btn" id="btnUnlock">UNLOCK SCENE</button>
+                </div>
+            `;
+
+            document.getElementById('btnUnlock').onclick = () => {
+                const entered = document.getElementById('sceneCodeInput').value.trim().toUpperCase();
+                if (entered === reqCode) {
+                    state.unlockedStep = Math.max(state.unlockedStep, episodeNum + 1);
+                    saveState();
+                    render();
+                } else {
+                    alert('Invalid Scene Code. Please wait for the instructor to reveal the correct code.');
+                }
+            };
+        }
+
+        // --- EPISODES 1 TO 10 RENDERER ---
+        function renderEpisode(container, epNum) {
+            let html = '';
+            
+            switch(epNum) {
+                case 1: html = getEp1Content(); break;
+                case 2: html = getEp2Content(); break;
+                case 3: html = getEp3Content(); break;
+                case 4: html = getEp4Content(); break;
+                case 5: html = getEp5Content(); break;
+                case 6: html = getEp6Content(); break;
+                case 7: html = getEp7Content(); break;
+                case 8: html = getEp8Content(); break;
+                case 9: html = getEp9Content(); break;
+                case 10: html = getEp10Content(); break;
+            }
+
+            container.innerHTML = html;
+            bindEpEvents(epNum);
+        }
+
+        // EPISODE 1 CONTENT
+        function getEp1Content() {
+            const epData = state.episodes.ep1;
+            const opts = [
+                { key: 'A', text: '“Yes. Tell me everything. I need to know who I’m dealing with.”' },
+                { key: 'B', text: '“I’ll come for lunch, but I’d rather form my own impressions first.”' },
+                { key: 'C', text: '“I’d rather keep personal friendship separate from work.”' },
+                { key: 'D', text: '“Tell me about the culture and how things work, but I don’t want gossip about individuals.”' }
+            ];
+
+            return `
+                <div class="card">
+                    <h2 class="title-gold">EPISODE 1</h2>
+                    <h3 style="margin-bottom: 16px;">Welcome to Nexus</h3>
+                    <p>Vern Huey offers to tell you how things “really work” at Nexus.</p>
+                    
+                    <label class="field-label">How do you respond?</label>
+                    <div class="options-grid">
+                        ${opts.map(o => `
+                            <div class="option-card ${epData.choice === o.key ? 'selected' : ''}" onclick="setEpChoice('ep1', '${o.key}')">
+                                <input type="radio" ${epData.choice === o.key ? 'checked' : ''}>
+                                <div><strong>${o.key}.</strong> ${o.text}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label class="field-label">Optional Micro-Reflection</label>
+                        <p style="font-size: 0.85rem; color: var(--text-muted);">What made you choose that?</p>
+                        <textarea id="ep1_reflection" placeholder="Short text response...">${epData.reflection}</textarea>
+                    </div>
+
+                    <button class="btn" onclick="submitEpisode(1)">SUBMIT DECISION</button>
+                </div>
+            `;
+        }
+
+        // EPISODE 2 CONTENT
+        function getEp2Content() {
+            const epData = state.episodes.ep2;
+            const concernsList = [
+                'unclear source', 'second-hand claims', 'missing page',
+                'inconsistent formatting', 'no official reference number',
+                'contradictory official information', 'suspicious document version',
+                'lack of confirmation', 'none of these'
+            ];
+            const conclusions = [
+                { key: 'A', text: 'Aisha is definitely being replaced.' },
+                { key: 'B', text: 'Trifiny has already been promoted.' },
+                { key: 'C', text: 'A leadership review appears to be happening, but the outcome is unconfirmed.' },
+                { key: 'D', text: 'The leaked document must be completely fake.' },
+                { key: 'E', text: 'There is not enough information to conclude anything.' }
+            ];
+            const cyoaList = [
+                { key: 'A', text: 'Forward everything to someone you trust.' },
+                { key: 'B', text: 'Keep the material privately but do not share it.' },
+                { key: 'C', text: 'Ask Vern Huey where the document originated.' },
+                { key: 'D', text: 'Ask Aisha whether there is anything the team officially needs to know.' },
+                { key: 'E', text: 'Speak to Trifiny because her name appears in the document.' }
+            ];
+            const influencesList = ['confidentiality', 'curiosity', 'loyalty', 'fairness', 'self-protection', 'need for accurate information'];
+
+            return `
+                <div class="card">
+                    <h2 class="title-gold">EPISODE 2</h2>
+                    <h3 style="margin-bottom: 16px;">The List</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); font-style: italic;">Refer to the evidence shown on the classroom screen.</p>
+                    
+                    <label class="field-label">PART A — Source Reliability</label>
+                    <div class="slider-group">
+                        <div class="slider-header"><span>Workplace Chat Reliability</span><strong>${epData.slider1} / 5</strong></div>
+                        <input type="range" min="1" max="5" value="${epData.slider1}" onchange="setEp2Slider(1, this.value)">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-header"><span>Leaked Document Reliability</span><strong>${epData.slider2} / 5</strong></div>
+                        <input type="range" min="1" max="5" value="${epData.slider2}" onchange="setEp2Slider(2, this.value)">
+                    </div>
+                    <div class="slider-group">
+                        <div class="slider-header"><span>Official HR Email Reliability</span><strong>${epData.slider3} / 5</strong></div>
+                        <input type="range" min="1" max="5" value="${epData.slider3}" onchange="setEp2Slider(3, this.value)">
+                    </div>
+
+                    <div class="form-group" style="margin-top: 24px;">
+                        <label class="field-label">What concerns did you notice? (Select all that apply)</label>
+                        <div class="options-grid">
+                            ${concernsList.map(item => {
+                                const checked = epData.concerns.includes(item);
+                                return `
+                                    <div class="option-card ${checked ? 'selected' : ''}" onclick="toggleEp2Concern('${item}')">
+                                        <input type="checkbox" ${checked ? 'checked' : ''}>
+                                        <div>${item}</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 24px;">
+                        <label class="field-label">Strongest Conclusion</label>
+                        <div class="options-grid">
+                            ${conclusions.map(c => `
+                                <div class="option-card ${epData.conclusion === c.key ? 'selected' : ''}" onclick="setEp2Conclusion('${c.key}')">
+                                    <input type="radio" ${epData.conclusion === c.key ? 'checked' : ''}>
+                                    <div><strong>${c.key}.</strong> ${c.text}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 24px;">
+                        <label class="field-label">What do you do next?</label>
+                        <div class="options-grid">
+                            ${cyoaList.map(c => `
+                                <div class="option-card ${epData.cyoa === c.key ? 'selected' : ''}" onclick="setEp2CYOA('${c.key}')">
+                                    <input type="radio" ${epData.cyoa === c.key ? 'checked' : ''}>
+                                    <div><strong>${c.key}.</strong> ${c.text}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 24px;">
+                        <label class="field-label">What influenced you most? (Choose up to TWO)</label>
+                        <div class="options-grid">
+                            ${influencesList.map(inf => {
+                                const checked = epData.influences.includes(inf);
+                                return `
+                                    <div class="option-card ${checked ? 'selected' : ''}" onclick="toggleEp2Influence('${inf}')">
+                                        <input type="checkbox" ${checked ? 'checked' : ''}>
+                                        <div>${inf}</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="submitEpisode(2)">SUBMIT DECISION</button>
+                </div>
+            `;
+        }
+
+        // EPISODE 3 CONTENT
+        function getEp3Content() {
+            const epData = state.episodes.ep3;
+            const opts = [
+                { key: 'A', text: 'Finish Daniel’s section yourself.' },
+                { key: 'B', text: 'Tell Aisha that Daniel has not delivered.' },
+                { key: 'C', text: 'Explain that the brief changed and propose a realistic revised plan.' },
+                { key: 'D', text: 'Ask Trifiny to temporarily accept Daniel’s original section.' },
+                { key: 'E', text: 'Contact Daniel first before deciding.' }
+            ];
+
+            return `
+                <div class="card">
+                    <h2 class="title-gold">EPISODE 3</h2>
+                    <h3 style="margin-bottom: 16px;">The Deadline</h3>
+                    <p>The client changed the brief. Daniel’s work was based on the earlier version. He is now offline and the deadline is approaching.</p>
+                    
+                    <label class="field-label">What do you do?</label>
+                    <div class="options-grid">
+                        ${opts.map(o => `
+                            <div class="option-card ${epData.choice === o.key ? 'selected' : ''}" onclick="setEpChoice('ep3', '${o.key}')">
+                                <input type="radio" ${epData.choice === o.key ? 'checked' : ''}>
+                                <div><strong>${o.key}.</strong> ${o.text}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div style="margin-top: 28px; padding: 16px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid var(--border-subtle);">
+                        <h4 style="color: var(--gold-primary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">PRIVATE NEXUS JOURNAL</h4>
+                        
+                        <div class="form-group">
+                            <label class="field-label">1. You had limited time and incomplete information. What influenced your decision most?</label>
+                            <textarea id="ep3_p1">${epData.prompt1}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="field-label">2. What additional information might have changed your decision?</label>
+                            <textarea id="ep3_p2">${epData.prompt2}</textarea>
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="submitEpisode(3)">SUBMIT DECISION</button>
+                </div>
+            `;
+        }
+
+        // EPISODE 4 CONTENT
+        function getEp4Content() {
+            const epData = state.episodes.ep4;
+            const opts = [
+                { key: 'A', text: '“I didn’t know. I can ask Aisha what happened.”' },
+                { key: 'B', text: '“Management probably had a reason.”' },
+                { key: 'C', text: '“I didn’t choose this, but I’m still taking the opportunity.”' },
+                { key: 'D', text: '“Tell me what happened first.”' },
+                { key: 'E', text: '“If you think it was unfair, you should raise it yourself.”' }
+            ];
+
+            return `
+                <div class="card">
+                    <h2 class="title-gold">EPISODE 4</h2>
+                    <h3 style="margin-bottom: 16px;">The Favourite</h3>
+                    <p>Daniel discovers that you replaced him for an important presentation opportunity.</p>
+                    
+                    <label class="field-label">What do you say?</label>
+                    <div class="options-grid">
+                        ${opts.map(o => `
+                            <div class="option-card ${epData.choice === o.key ? 'selected' : ''}" onclick="setEpChoice('ep4', '${o.key}')">
+                                <input type="radio" ${epData.choice === o.key ? 'checked' : ''}>
+                                <div><strong>${o.key}.</strong> ${o.text}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="form-group" style="margin-top: 28px;">
+                        <label class="field-label">What mattered most to you? (Rank in priority order)</label>
+                        <div class="rank-list">
+                            ${epData.ranking.map((item, idx) => `
+                                <div class="rank-item">
+                                    <span><strong>${idx + 1}.</strong> ${item}</span>
+                                    <div class="rank-controls">
+                                        <button class="btn-rank" onclick="moveRank('ep4', ${idx}, -1)">▲</button>
+                                        <button class="btn-rank" onclick="moveRank('ep4', ${idx}, 1)">▼</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="submitEpisode(4)">SUBMIT DECISION</button>
+                </div>
+            `;
+        }
+
+        // EPISODE 5 CONTENT
+        function getEp5Content() {
+            const epData = state.episodes.ep5;
+            const opts = [
+                { key: 'A', text: 'Stay silent.' },
+                { key: 'B', text: 'Tell the group the joke has gone too far.' },
+                { key: 'C', text: 'Save screenshots or evidence.' },
+                { key: 'D', text: 'Check on Daniel privately.' },
+                { key: 'E', text: 'Leave the group.' },
+                { key: 'F', text: 'Raise the pattern with an appropriate person.' }
+            ];
+
+            return `
+                <div class="card">
+                    <h2 class="title-gold">EPISODE 5</h2>
+                    <h3 style="margin-bottom: 16px;">The Joke</h3>
+                    <p>You have seen Daniel mocked repeatedly, excluded from meetings, and discussed in a private group chat.</p>
+                    
+                    <label class="field-label">Choose UP TO TWO actions:</label>
+                    <div class="options-grid">
+                        ${opts.map(o => {
+                            const checked = epData.choices.includes(o.key);
+                            return `
+                                <div class="option-card ${checked ? 'selected' : ''}" onclick="toggleEp5Choice('${o.key}')">
+                                    <input type="checkbox" ${checked ? 'checked' : ''}>
+                                    <div><strong>${o.key}.</strong> ${o.text}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+
+                    <div style="margin-top: 28px; padding: 16px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid var(--border-subtle);">
+                        <h4 style="color: var(--gold-primary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">PRIVATE NEXUS JOURNAL</h4>
+                        
+                        <div class="form-group">
+                            <label class="field-label">At what point did Daniel’s treatment stop feeling like “just joking” to you? Why?</label>
+                            <textarea id="ep5_p1">${epData.prompt1}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="field-label">What might make someone stay silent in real life?</label>
+                            <textarea id="ep5_p2">${epData.prompt2}</textarea>
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="submitEpisode(5)">SUBMIT DECISION</button>
+                </div>
+            `;
+        }
+
+        // EPISODE 6 CONTENT
+        function getEp6Content() {
+            const epData = state.episodes.ep6;
+            const opts = [
+                { key: 'A', text: 'Protect Daniel’s confidence completely.' },
+                { key: 'B', text: 'Tell Aisha he is considering resigning.' },
+                { key: 'C', text: 'Encourage Daniel to speak to Aisha himself and offer support.' },
+                { key: 'D', text: 'Tell Aisha only that Daniel appears under significant pressure.' },
+                { key: 'E', text: 'Ask Daniel whether he believes the treatment he is experiencing is bullying before deciding what support is appropriate.' }
+            ];
+            const respList = ['confidentiality', 'friendship', 'team wellbeing', 'duty of care', 'professional responsibility'];
+
+            return `
+                <div class="card">
+                    <h2 class="title-gold">EPISODE 6</h2>
+                    <h3 style="margin-bottom: 16px;">Don’t Tell Anyone</h3>
+                    <p>Daniel tells you he is considering resigning and asks you not to tell anyone. Later Aisha asks whether he has said anything.</p>
+                    
+                    <label class="field-label">What do you do?</label>
+                    <div class="options-grid">
+                        ${opts.map(o => `
+                            <div class="option-card ${epData.choice === o.key ? 'selected' : ''}" onclick="setEpChoice('ep6', '${o.key}')">
+                                <input type="radio" ${epData.choice === o.key ? 'checked' : ''}>
+                                <div><strong>${o.key}.</strong> ${o.text}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="form-group" style="margin-top: 24px;">
+                        <label class="field-label">Which responsibility feels strongest here? (Choose ONE)</label>
+                        <div class="options-grid">
+                            ${respList.map(r => `
+                                <div class="option-card ${epData.responsibility === r ? 'selected' : ''}" onclick="setEp6Resp('${r}')">
+                                    <input type="radio" ${epData.responsibility === r ? 'checked' : ''}>
+                                    <div>${r}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="submitEpisode(6)">SUBMIT DECISION</button>
+                </div>
+            `;
+        }
+
+        // EPISODE 7 CONTENT
+        function getEp7Content() {
+            const epData = state.episodes.ep7;
+            const opts = [
+                { key: 'A', text: 'Do nothing unless Trifiny asks.' },
+                { key: 'B', text: 'Document what you witnessed.' },
+                { key: 'C', text: 'Check on Trifiny privately.' },
+                { key: 'D', text: 'Encourage her to consider an appropriate workplace support or reporting channel.' },
+                { key: 'E', text: 'Confront Adrian yourself.' }
+            ];
+            const factorsList = ['intent', 'impact', 'consent', 'power difference', 'repetition', 'workplace policy'];
+
+            return `
+                <div class="card">
+                    <h2 class="title-gold">EPISODE 7</h2>
+                    <h3 style="margin-bottom: 16px;">The Dinner</h3>
+                    <p>You witnessed Adrian behaving in a way that appeared to make Trifiny uncomfortable.</p>
+                    
+                    <label class="field-label">What do you do?</label>
+                    <div class="options-grid">
+                        ${opts.map(o => `
+                            <div class="option-card ${epData.choice === o.key ? 'selected' : ''}" onclick="setEpChoice('ep7', '${o.key}')">
+                                <input type="radio" ${epData.choice === o.key ? 'checked' : ''}>
+                                <div><strong>${o.key}.</strong> ${o.text}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="form-group" style="margin-top: 24px;">
+                        <label class="field-label">Which factors matter most? (Choose UP TO THREE)</label>
+                        <div class="options-grid">
+                            ${factorsList.map(f => {
+                                const checked = epData.factors.includes(f);
+                                return `
+                                    <div class="option-card ${checked ? 'selected' : ''}" onclick="toggleEp7Factor('${f}')">
+                                        <input type="checkbox" ${checked ? 'checked' : ''}>
+                                        <div>${f}</div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="submitEpisode(7)">SUBMIT DECISION</button>
+                </div>
+            `;
+        }
+
+        // EPISODE 8 CONTENT
+        function getEp8Content() {
+            const epData = state.episodes.ep8;
+            const opts = [
+                { key: 'A', text: 'Respect her request and do nothing.' },
+                { key: 'B', text: 'Help her document the incidents and understand her support/reporting options.' },
+                { key: 'C', text: 'Report Adrian yourself immediately.' },
+                { key: 'D', text: 'Offer to accompany her to HR or another appropriate support channel while letting her decide what to disclose.' },
+                { key: 'E', text: 'Confront Adrian privately.' }
+            ];
+
+            return `
+                <div class="card">
+                    <h2 class="title-gold">EPISODE 8</h2>
+                    <h3 style="margin-bottom: 16px;">What Did You See?</h3>
+                    <p>Trifiny reveals that the dinner was not the first incident. She asks you not to report anything yet.</p>
+                    
+                    <label class="field-label">How do you support Trifiny without removing her agency?</label>
+                    <div class="options-grid">
+                        ${opts.map(o => `
+                            <div class="option-card ${epData.choice === o.key ? 'selected' : ''}" onclick="setEpChoice('ep8', '${o.key}')">
+                                <input type="radio" ${epData.choice === o.key ? 'checked' : ''}>
+                                <div><strong>${o.key}.</strong> ${o.text}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div style="margin-top: 28px; padding: 16px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid var(--border-subtle);">
+                        <h4 style="color: var(--gold-primary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">PRIVATE NEXUS JOURNAL</h4>
+                        
+                        <div class="form-group">
+                            <label class="field-label">1. What do you think Trifiny needs most from a colleague at this moment?</label>
+                            <textarea id="ep8_p1">${epData.prompt1}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="field-label">2. Where is the line between supporting someone and taking control of their decision?</label>
+                            <textarea id="ep8_p2">${epData.prompt2}</textarea>
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="submitEpisode(8)">SUBMIT DECISION</button>
+                </div>
+            `;
+        }
+
+        // EPISODE 9 CONTENT
+        function getEp9Content() {
+            const epData = state.episodes.ep9;
+            const opts = [
+                { key: 'A', text: 'Back away.' },
+                { key: 'B', text: 'Ask Aisha directly whether your probation review is connected.' },
+                { key: 'C', text: 'Document the conversation.' },
+                { key: 'D', text: 'Speak confidentially with an appropriate workplace support/reporting channel.' },
+                { key: 'E', text: 'Tell Trifiny what Aisha said.' },
+                { key: 'F', text: 'Ask Vern Huey what he knows.' }
+            ];
+
+            return `
+                <div class="card">
+                    <h2 class="title-gold">EPISODE 9</h2>
+                    <h3 style="margin-bottom: 16px;">The Warning</h3>
+                    <p>Aisha tells you to be careful about getting involved and reminds you that your probation review is next month.</p>
+                    
+                    <div class="form-group">
+                        <label class="field-label">Choose ONE Primary Action:</label>
+                        <div class="options-grid">
+                            ${opts.map(o => `
+                                <div class="option-card ${epData.primary === o.key ? 'selected' : ''}" onclick="setEp9Action('primary', '${o.key}')">
+                                    <input type="radio" ${epData.primary === o.key ? 'checked' : ''}>
+                                    <div><strong>${o.key}.</strong> ${o.text}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 24px;">
+                        <label class="field-label">Choose ONE Secondary Action:</label>
+                        <div class="options-grid">
+                            ${opts.map(o => `
+                                <div class="option-card ${epData.secondary === o.key ? 'selected' : ''}" onclick="setEp9Action('secondary', '${o.key}')">
+                                    <input type="radio" ${epData.secondary === o.key ? 'checked' : ''}>
+                                    <div><strong>${o.key}.</strong> ${o.text}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 28px; padding: 16px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid var(--border-subtle);">
+                        <h4 style="color: var(--gold-primary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">PRIVATE NEXUS JOURNAL</h4>
+                        
+                        <blockquote style="border-left: 2px solid var(--gold-primary); padding-left: 12px; font-style: italic; color: var(--gold-bright); margin-bottom: 16px;">
+                            “Be careful about getting involved in things you don’t fully understand. Your probation review is next month.”
+                        </blockquote>
+
+                        <div class="form-group">
+                            <label class="field-label">1. What did you hear beneath the words?</label>
+                            <textarea id="ep9_p1">${epData.prompt1}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="field-label">2. Would the same words feel different if they came from a colleague rather than your manager? Why?</label>
+                            <textarea id="ep9_p2">${epData.prompt2}</textarea>
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="submitEpisode(9)">SUBMIT DECISION</button>
+                </div>
+            `;
+        }
+
+        // EPISODE 10 CONTENT
+        function getEp10Content() {
+            const epData = state.episodes.ep10;
+            const opts = [
+                { key: 'A', text: 'Follow Adrian’s instruction.' },
+                { key: 'B', text: 'Present the figure and correct it later.' },
+                { key: 'C', text: 'Tell Aisha you are uncomfortable presenting information you know is inaccurate.' },
+                { key: 'D', text: 'Tell the client immediately.' },
+                { key: 'E', text: 'Ask for a short pause to confirm the error and agree on an accurate response.' }
+            ];
+            const infList = ['loyalty', 'accuracy', 'authority', 'reputation', 'ethics', 'client trust'];
+
+            return `
+                <div class="card">
+                    <h2 class="title-gold">EPISODE 10</h2>
+                    <h3 style="margin-bottom: 16px;">The Client</h3>
+                    <p>Daniel discovers that an important client figure is wrong. Adrian wants the team to proceed anyway.</p>
+                    
+                    <label class="field-label">What do you do?</label>
+                    <div class="options-grid">
+                        ${opts.map(o => `
+                            <div class="option-card ${epData.choice === o.key ? 'selected' : ''}" onclick="setEpChoice('ep10', '${o.key}')">
+                                <input type="radio" ${epData.choice === o.key ? 'checked' : ''}>
+                                <div><strong>${o.key}.</strong> ${o.text}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <div class="form-group" style="margin-top: 24px;">
+                        <label class="field-label">What mattered most here? (Choose ONE)</label>
+                        <div class="options-grid">
+                            ${infList.map(item => `
+                                <div class="option-card ${epData.influence === item ? 'selected' : ''}" onclick="setEp10Inf('${item}')">
+                                    <input type="radio" ${epData.influence === item ? 'checked' : ''}>
+                                    <div>${item}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <button class="btn" onclick="submitEpisode(10)">SUBMIT DECISION</button>
+                </div>
+            `;
+        }
+
+        // --- EPISODE LOGIC & INPUT BINDINGS ---
+        window.setEpChoice = function(epKey, val) {
+            state.episodes[epKey].choice = val;
+            render();
+        };
+
+        window.setEp2Slider = function(idx, val) {
+            state.episodes.ep2[`slider${idx}`] = parseInt(val);
+            render();
+        };
+
+        window.toggleEp2Concern = function(item) {
+            const arr = state.episodes.ep2.concerns;
+            if (item === 'none of these') {
+                state.episodes.ep2.concerns = ['none of these'];
+            } else {
+                const idx = arr.indexOf(item);
+                const noneIdx = arr.indexOf('none of these');
+                if (noneIdx > -1) arr.splice(noneIdx, 1);
+                if (idx > -1) arr.splice(idx, 1);
+                else arr.push(item);
+            }
+            render();
+        };
+
+        window.setEp2Conclusion = function(val) { state.episodes.ep2.conclusion = val; render(); };
+        window.setEp2CYOA = function(val) { state.episodes.ep2.cyoa = val; render(); };
+        
+        window.toggleEp2Influence = function(item) {
+            const arr = state.episodes.ep2.influences;
+            const idx = arr.indexOf(item);
+            if (idx > -1) arr.splice(idx, 1);
+            else {
+                if (arr.length < 2) arr.push(item);
+                else alert('Select up to 2 items');
+            }
+            render();
+        };
+
+        window.moveRank = function(epKey, idx, dir) {
+            const list = state.episodes[epKey].ranking;
+            const targetIdx = idx + dir;
+            if (targetIdx >= 0 && targetIdx < list.length) {
+                const temp = list[idx];
+                list[idx] = list[targetIdx];
+                list[targetIdx] = temp;
+                render();
+            }
+        };
+
+        window.toggleEp5Choice = function(val) {
+            const arr = state.episodes.ep5.choices;
+            const idx = arr.indexOf(val);
+            if (idx > -1) arr.splice(idx, 1);
+            else {
+                if (arr.length < 2) arr.push(val);
+                else alert('Select maximum 2 actions');
+            }
+            render();
+        };
+
+        window.setEp6Resp = function(val) { state.episodes.ep6.responsibility = val; render(); };
+        
+        window.toggleEp7Factor = function(val) {
+            const arr = state.episodes.ep7.factors;
+            const idx = arr.indexOf(val);
+            if (idx > -1) arr.splice(idx, 1);
+            else {
+                if (arr.length < 3) arr.push(val);
+                else alert('Select up to 3 factors');
+            }
+            render();
+        };
+
+        window.setEp9Action = function(type, val) {
+            state.episodes.ep9[type] = val;
+            render();
+        };
+
+        window.setEp10Inf = function(val) { state.episodes.ep10.influence = val; render(); };
+
+        function bindEpEvents(epNum) {
+            if (epNum === 3) {
+                document.getElementById('ep3_p1').oninput = (e) => state.episodes.ep3.prompt1 = e.target.value;
+                document.getElementById('ep3_p2').oninput = (e) => state.episodes.ep3.prompt2 = e.target.value;
+            } else if (epNum === 5) {
+                document.getElementById('ep5_p1').oninput = (e) => state.episodes.ep5.prompt1 = e.target.value;
+                document.getElementById('ep5_p2').oninput = (e) => state.episodes.ep5.prompt2 = e.target.value;
+            } else if (epNum === 8) {
+                document.getElementById('ep8_p1').oninput = (e) => state.episodes.ep8.prompt1 = e.target.value;
+                document.getElementById('ep8_p2').oninput = (e) => state.episodes.ep8.prompt2 = e.target.value;
+            } else if (epNum === 9) {
+                document.getElementById('ep9_p1').oninput = (e) => state.episodes.ep9.prompt1 = e.target.value;
+                document.getElementById('ep9_p2').oninput = (e) => state.episodes.ep9.prompt2 = e.target.value;
+            } else if (epNum === 1) {
+                document.getElementById('ep1_reflection').oninput = (e) => state.episodes.ep1.reflection = e.target.value;
+            }
+        }
+
+        window.submitEpisode = function(epNum) {
+            // Check mandatory fields
+            if (epNum === 1 && !state.episodes.ep1.choice) return alert('Please select a response.');
+            if (epNum === 2 && (!state.episodes.ep2.conclusion || !state.episodes.ep2.cyoa)) return alert('Please complete all questions.');
+            if (epNum === 3) {
+                if (!state.episodes.ep3.choice) return alert('Please choose an action.');
+                if (!state.episodes.ep3.prompt1.trim() || !state.episodes.ep3.prompt2.trim()) return alert('Please fill in both journal prompts.');
+            }
+            if (epNum === 4 && !state.episodes.ep4.choice) return alert('Please select a response.');
+            if (epNum === 5) {
+                if (state.episodes.ep5.choices.length === 0) return alert('Please select at least one action.');
+                if (!state.episodes.ep5.prompt1.trim() || !state.episodes.ep5.prompt2.trim()) return alert('Please complete the journal prompts.');
+            }
+            if (epNum === 6 && (!state.episodes.ep6.choice || !state.episodes.ep6.responsibility)) return alert('Please answer both questions.');
+            if (epNum === 7 && !state.episodes.ep7.choice) return alert('Please select an action.');
+            if (epNum === 8) {
+                if (!state.episodes.ep8.choice) return alert('Please choose how to support Trifiny.');
+                if (!state.episodes.ep8.prompt1.trim() || !state.episodes.ep8.prompt2.trim()) return alert('Please complete the journal prompts.');
+            }
+            if (epNum === 9) {
+                if (!state.episodes.ep9.primary || !state.episodes.ep9.secondary) return alert('Please choose both primary and secondary actions.');
+                if (state.episodes.ep9.primary === state.episodes.ep9.secondary) return alert('Primary and secondary actions must be different.');
+                if (!state.episodes.ep9.prompt1.trim() || !state.episodes.ep9.prompt2.trim()) return alert('Please complete the journal prompts.');
+            }
+            if (epNum === 10 && (!state.episodes.ep10.choice || !state.episodes.ep10.influence)) return alert('Please complete all questions.');
+
+            saveState();
+            renderLockedScreen(document.getElementById('mainView'), epNum);
+        };
+
+        // --- SCREEN 12: FINALE (FRIDAY, 4:55 PM) ---
+        function renderFinale(container) {
+            const list = state.episodes.finale.ranking;
+            container.innerHTML = `
+                <div class="card screen-finale-bg" style="text-align: center; padding: 32px 20px;">
+                    <h2 style="color: var(--gold-bright); font-size: 1rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 8px;">FINAL EPISODE</h2>
+                    <h1 class="title-gold" style="font-size: 2.2rem; margin-bottom: 16px;">FRIDAY, 4:55 PM</h1>
+                    
+                    <p style="font-size: 1.1rem; color: #fff;">Everything needs your attention.</p>
+                    <p style="color: var(--text-muted); font-style: italic; margin-bottom: 24px;">But you can only do one thing first. Drag or use arrows to prioritize:</p>
+
+                    <div class="rank-list" style="text-align: left;">
+                        ${list.map((item, idx) => `
+                            <div class="rank-item" style="background: rgba(0,0,0,0.5); border-color: rgba(197,160,89,0.3);">
+                                <span><strong style="color: var(--gold-primary);">${idx + 1}.</strong> ${item}</span>
+                                <div class="rank-controls">
+                                    <button class="btn-rank" onclick="moveRank('finale', ${idx}, -1)">▲</button>
+                                    <button class="btn-rank" onclick="moveRank('finale', ${idx}, 1)">▼</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <button class="btn" id="btnSubmitFinale" style="margin-top: 24px;">SUBMIT FINAL PRIORITIES</button>
+                </div>
+            `;
+
+            document.getElementById('btnSubmitFinale').onclick = () => {
+                saveState();
+                state.currentStep = 13;
+                saveState();
+                render();
+            };
+        }
+
+        // --- SCREEN 13: RESULTS & WORKPLACE PROFILE ---
+        function renderResults(container) {
+            const scores = calculateScores();
+            const archetype = determineArchetype(scores);
+
+            let html = `
+                <div class="card" style="text-align: center; border-color: var(--gold-primary);">
+                    <h2 style="color: var(--gold-primary); font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px;">NEXUS COMPLETED</h2>
+                    <h1 style="font-size: 1.8rem; margin-bottom: 12px;">YOUR FIRST WEEK AT NEXUS IS OVER.</h1>
+                    <p style="color: var(--text-muted); font-style: italic;">Your decisions tell a story.</p>
+                </div>
+
+                <!-- AFTER-NEXUS BELIEF COMPARISON -->
+                <div class="card">
+                    <h2 class="title-gold" style="margin-bottom: 16px;">AFTER-NEXUS BELIEF COMPARISON</h2>
+                    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">Review your belief shift (Before vs After):</p>
+            `;
+
+            BELIEF_STATEMENTS.forEach((stmt, idx) => {
+                const before = state.baseline.beforeBeliefs[idx];
+                const after = state.baseline.afterBeliefs[idx];
+                html += `
+                    <div class="likert-group">
+                        <div class="likert-statement"><strong>${idx + 1}.</strong> ${stmt}</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 6px;">
+                            <span>Before: <strong style="color: var(--gold-primary);">${before} / 5</strong></span>
+                            <span>After:</span>
+                            <div class="likert-options" style="width: 180px;">
+                                ${[1,2,3,4,5].map(n => `
+                                    <button class="likert-btn ${after === n ? 'selected' : ''}" onclick="setAfterBelief(${idx}, ${n})">${n}</button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += `
+                    <div class="form-group" style="margin-top: 16px;">
+                        <label class="field-label">What changed most in your thinking?</label>
+                        <textarea id="inputBeliefChange" placeholder="Optional reflection...">${state.baseline.beliefChangeNote}</textarea>
+                    </div>
+                </div>
+
+                <!-- RADAR CHART & ARCHETYPE -->
+                <div class="card" style="text-align: center;">
+                    <h2 class="title-gold">YOUR WORKPLACE COMMUNICATION PROFILE</h2>
+                    <p class="subtitle" style="margin-bottom: 12px;">8-Dimension Trait Matrix</p>
+
+                    <div class="radar-container">
+                        <canvas id="radarCanvas" width="340" height="340"></canvas>
+                    </div>
+
+                    <div style="margin-top: 24px; text-align: left; background: rgba(197, 160, 89, 0.08); padding: 20px; border-radius: 8px; border: 1px solid var(--border-subtle);">
+                        <h3 style="color: var(--gold-bright); text-transform: uppercase; letter-spacing: 1px; font-size: 1.1rem; margin-bottom: 8px;">
+                            ARCHETYPE: ${archetype.title}
+                        </h3>
+                        <p style="font-size: 0.95rem; color: #e0e0e0; margin-bottom: 0;">${archetype.description}</p>
+                    </div>
+                </div>
+
+                <!-- WHAT YOU SAID VS WHAT YOU DID -->
+                <div class="card">
+                    <h2 class="title-gold">WHAT YOU SAID VS WHAT YOU DID</h2>
+                    <div style="margin-top: 12px;">
+                        <p style="font-size: 0.95rem;">
+                            <strong>BEFORE NEXUS You Said:</strong> <span style="color: var(--gold-bright);">${getPersonalValueText(state.baseline.personalValue)}</span>
+                        </p>
+                        <div style="background: rgba(0,0,0,0.3); padding: 14px; border-radius: 8px; margin: 12px 0; font-size: 0.9rem;">
+                            ${getSaidVsDidInterpretation(state.baseline.personalValue, scores)}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DECISION REPLAY CARDS -->
+                <div class="card">
+                    <h2 class="title-gold" style="margin-bottom: 16px;">DECISION REPLAY & ANALYSIS</h2>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">Tap any episode card to expand choices and perspectives.</p>
+                    <div id="replayAccordionContainer">
+                        ${renderReplayCards()}
+                    </div>
+                </div>
+
+                <!-- FINAL REFLECTION SECTION -->
+                <div class="card">
+                    <h2 class="title-gold">MY NEXUS NOTES</h2>
+                    <p class="subtitle">What did this experience teach you about workplace relationships, communication and power?</p>
+
+                    <div class="starter-chips">
+                        <span class="chip" onclick="addStarterPrompt('Something that surprised me was...')">+ Something that surprised me...</span>
+                        <span class="chip" onclick="addStarterPrompt('One decision I struggled with was...')">+ One decision I struggled with...</span>
+                        <span class="chip" onclick="addStarterPrompt('I realised that power can...')">+ I realised that power can...</span>
+                        <span class="chip" onclick="addStarterPrompt('I used to think professionalism meant...')">+ Professionalism meant...</span>
+                        <span class="chip" onclick="addStarterPrompt('One boundary I would protect is...')">+ One boundary I would protect...</span>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 12px;">
+                        <textarea id="nexusNotesText" style="min-height: 140px;" placeholder="Write your reflection notes here (at least 1,000 characters suggested)...">${state.reflections.nexusNotes}</textarea>
+                    </div>
+
+                    <div style="margin-top: 32px; border-top: 1px solid var(--border-subtle); padding-top: 20px;">
+                        <h3 class="title-gold" style="font-size: 1.1rem; margin-bottom: 12px;">ONE DECISION I WOULD CHANGE</h3>
+                        
+                        <div class="form-group">
+                            <label class="field-label">Choose One Moment To Replay:</label>
+                            <select id="selectChangeEp" onchange="updateChangeEp(this.value)">
+                                ${[1,2,3,4,5,6,7,8,9,10].map(n => `<option value="ep${n}" ${state.reflections.changeEpId === `ep${n}` ? 'selected' : ''}>Episode ${n}</option>`).join('')}
+                            </select>
+                        </div>
+
+                        <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 6px; font-size: 0.85rem; margin-bottom: 16px;">
+                            <strong>Your Original Selection:</strong>
+                            <div id="originalChoiceDisplay" style="color: var(--gold-bright); margin-top: 4px;">
+                                ${getOriginalChoiceText(state.reflections.changeEpId)}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="field-label">If you could replay this moment, what would you do differently?</label>
+                            <textarea id="inputChangeReplayAction">${state.reflections.changeReplayAction}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="field-label">Why?</label>
+                            <textarea id="inputChangeWhy">${state.reflections.changeWhy}</textarea>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 32px; border-top: 1px solid var(--border-subtle); padding-top: 20px;">
+                        <h3 class="title-gold" style="font-size: 1.1rem; margin-bottom: 8px;">PERSONAL ACTION STATEMENT</h3>
+                        <p style="font-size: 0.9rem; color: var(--gold-bright); margin-bottom: 8px;">“AFTER NEXUS...”</p>
+                        <div class="form-group">
+                            <label class="field-label">In a difficult workplace situation, I want to remember to...</label>
+                            <textarea id="inputActionStatement" style="min-height: 80px;">${state.reflections.actionStatement}</textarea>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 24px; text-align: center; font-size: 0.8rem; color: var(--text-muted); font-style: italic;">
+                        🔒 Reflection Privacy: Your responses are stored only on this device unless you choose to copy, print or submit them yourself.
+                    </div>
+                </div>
+
+                <!-- ACTION BUTTONS -->
+                <div class="card" style="text-align: center;">
+                    <button class="btn" onclick="copyReflectionSummary()">COPY MY REFLECTION</button>
+                    <button class="btn btn-secondary" onclick="window.print()">PRINT / SAVE AS PDF</button>
+                    <button class="btn btn-secondary" onclick="resetSimulation()" style="margin-top: 12px; color: #ff8888; border-color: rgba(255,100,100,0.3);">RESTART SIMULATION</button>
+                </div>
+            `;
+
+            container.innerHTML = html;
+
+            // Render SVG/Canvas Radar Chart
+            setTimeout(() => drawRadarChart(scores), 50);
+
+            // Bind Reflection Auto-saves
+            document.getElementById('inputBeliefChange').oninput = (e) => state.baseline.beliefChangeNote = e.target.value;
+            document.getElementById('nexusNotesText').oninput = (e) => state.reflections.nexusNotes = e.target.value;
+            document.getElementById('inputChangeReplayAction').oninput = (e) => state.reflections.changeReplayAction = e.target.value;
+            document.getElementById('inputChangeWhy').oninput = (e) => state.reflections.changeWhy = e.target.value;
+            document.getElementById('inputActionStatement').oninput = (e) => state.reflections.actionStatement = e.target.value;
+        }
+
+        window.setAfterBelief = function(idx, val) {
+            state.baseline.afterBeliefs[idx] = val;
+            renderResults(document.getElementById('mainView'));
+        };
+
+        window.addStarterPrompt = function(promptText) {
+            const txt = document.getElementById('nexusNotesText');
+            txt.value = txt.value ? txt.value + "\n\n" + promptText + " " : promptText + " ";
+            state.reflections.nexusNotes = txt.value;
+            txt.focus();
+        };
+
+        window.updateChangeEp = function(epId) {
+            state.reflections.changeEpId = epId;
+            document.getElementById('originalChoiceDisplay').innerText = getOriginalChoiceText(epId);
+            saveState();
+        };
+
+        function getOriginalChoiceText(epId) {
+            const epData = state.episodes[epId];
+            if (!epData) return 'No selection made.';
+            if (epId === 'ep1') return `Choice ${epData.choice || 'None'}`;
+            if (epId === 'ep2') return `CYOA Next Step: ${epData.cyoa || 'None'}`;
+            if (epId === 'ep5') return `Actions: ${epData.choices.join(', ') || 'None'}`;
+            if (epId === 'ep9') return `Primary: ${epData.primary || 'None'}, Secondary: ${epData.secondary || 'None'}`;
+            return `Choice ${epData.choice || 'None'}`;
+        }
+
+        function toggleAccordion(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle('open');
+        }
+
+        // --- SCORING & RADAR CHART ENGINE ---
+        function calculateScores() {
+            // Raw delta mapping
+            const raw = {
+                Professionalism: 0,
+                Judgement: 0,
+                Assertiveness: 0,
+                Boundaries: 0,
+                "Relationship Awareness": 0,
+                "Communication Adaptability": 0,
+                "Conflict Navigation": 0,
+                "Ethical Courage": 0
+            };
+
+            // Ep 1
+            const ep1Choice = state.episodes.ep1.choice;
+            if (ep1Choice === 'A') { raw["Relationship Awareness"] += 2; raw["Judgement"] -= 1; raw["Boundaries"] -= 1; }
+            if (ep1Choice === 'B') { raw["Judgement"] += 2; raw["Relationship Awareness"] += 1; raw["Communication Adaptability"] += 1; }
+            if (ep1Choice === 'C') { raw["Boundaries"] += 2; raw["Relationship Awareness"] -= 1; raw["Communication Adaptability"] -= 1; }
+            if (ep1Choice === 'D') { raw["Judgement"] += 2; raw["Boundaries"] += 2; raw["Professionalism"] += 1; }
+
+            // Ep 2
+            const ep2CYOA = state.episodes.ep2.cyoa;
+            if (ep2CYOA === 'A') { raw["Relationship Awareness"] += 1; raw["Judgement"] -= 2; raw["Professionalism"] -= 1; }
+            if (ep2CYOA === 'B') { raw["Boundaries"] += 1; raw["Judgement"] += 1; }
+            if (ep2CYOA === 'C') { raw["Judgement"] += 2; raw["Assertiveness"] += 1; }
+            if (ep2CYOA === 'D') { raw["Professionalism"] += 2; raw["Judgement"] += 2; raw["Communication Adaptability"] += 1; }
+            if (ep2CYOA === 'E') { raw["Relationship Awareness"] += 2; raw["Judgement"] += 0; raw["Boundaries"] -= 1; }
+
+            // Ep 3
+            const ep3Choice = state.episodes.ep3.choice;
+            if (ep3Choice === 'A') { raw["Relationship Awareness"] += 2; raw["Professionalism"] += 1; raw["Boundaries"] -= 2; }
+            if (ep3Choice === 'B') { raw["Professionalism"] += 1; raw["Assertiveness"] += 1; raw["Judgement"] -= 1; }
+            if (ep3Choice === 'C') { raw["Judgement"] += 2; raw["Professionalism"] += 2; raw["Assertiveness"] += 2; raw["Communication Adaptability"] += 2; }
+            if (ep3Choice === 'D') { raw["Communication Adaptability"] += 2; raw["Conflict Navigation"] += 1; }
+            if (ep3Choice === 'E') { raw["Relationship Awareness"] += 2; raw["Judgement"] += 1; raw["Professionalism"] += 1; }
+
+            // Ep 4
+            const ep4Choice = state.episodes.ep4.choice;
+            if (ep4Choice === 'A') { raw["Relationship Awareness"] += 2; raw["Assertiveness"] += 1; raw["Professionalism"] += 1; }
+            if (ep4Choice === 'B') { raw["Relationship Awareness"] -= 1; raw["Assertiveness"] -= 1; }
+            if (ep4Choice === 'C') { raw["Assertiveness"] += 2; raw["Boundaries"] += 1; raw["Relationship Awareness"] -= 1; }
+            if (ep4Choice === 'D') { raw["Judgement"] += 2; raw["Relationship Awareness"] += 2; raw["Conflict Navigation"] += 1; }
+            if (ep4Choice === 'E') { raw["Boundaries"] += 2; raw["Assertiveness"] += 1; raw["Relationship Awareness"] -= 1; }
+
+            // Ep 5
+            state.episodes.ep5.choices.forEach(c => {
+                if (c === 'A') { raw["Conflict Navigation"] -= 1; raw["Ethical Courage"] -= 2; }
+                if (c === 'B') { raw["Assertiveness"] += 2; raw["Ethical Courage"] += 2; }
+                if (c === 'C') { raw["Judgement"] += 2; raw["Professionalism"] += 1; }
+                if (c === 'D') { raw["Relationship Awareness"] += 2; raw["Ethical Courage"] += 1; }
+                if (c === 'E') { raw["Boundaries"] += 2; }
+                if (c === 'F') { raw["Professionalism"] += 2; raw["Ethical Courage"] += 2; raw["Conflict Navigation"] += 2; }
+            });
+
+            // Ep 6
+            const ep6Choice = state.episodes.ep6.choice;
+            if (ep6Choice === 'A') { raw["Boundaries"] += 1; raw["Relationship Awareness"] += 2; raw["Professionalism"] -= 1; }
+            if (ep6Choice === 'B') { raw["Relationship Awareness"] -= 2; raw["Assertiveness"] += 1; }
+            if (ep6Choice === 'C') { raw["Relationship Awareness"] += 2; raw["Professionalism"] += 2; raw["Conflict Navigation"] += 2; raw["Ethical Courage"] += 1; }
+            if (ep6Choice === 'D') { raw["Judgement"] += 2; raw["Professionalism"] += 1; raw["Relationship Awareness"] += 1; }
+            if (ep6Choice === 'E') { raw["Judgement"] += 2; raw["Relationship Awareness"] += 2; raw["Conflict Navigation"] += 1; }
+
+            // Ep 7
+            const ep7Choice = state.episodes.ep7.choice;
+            if (ep7Choice === 'A') { raw["Boundaries"] += 1; raw["Ethical Courage"] -= 1; }
+            if (ep7Choice === 'B') { raw["Judgement"] += 2; raw["Professionalism"] += 2; }
+            if (ep7Choice === 'C') { raw["Relationship Awareness"] += 2; raw["Ethical Courage"] += 1; }
+            if (ep7Choice === 'D') { raw["Professionalism"] += 2; raw["Ethical Courage"] += 2; raw["Conflict Navigation"] += 2; }
+            if (ep7Choice === 'E') { raw["Assertiveness"] += 2; raw["Ethical Courage"] += 2; raw["Judgement"] -= 1; }
+
+            // Ep 8
+            const ep8Choice = state.episodes.ep8.choice;
+            if (ep8Choice === 'A') { raw["Relationship Awareness"] += 1; raw["Ethical Courage"] -= 1; }
+            if (ep8Choice === 'B') { raw["Judgement"] += 2; raw["Relationship Awareness"] += 2; raw["Professionalism"] += 2; raw["Ethical Courage"] += 1; }
+            if (ep8Choice === 'C') { raw["Ethical Courage"] += 2; raw["Assertiveness"] += 2; raw["Relationship Awareness"] -= 1; }
+            if (ep8Choice === 'D') { raw["Relationship Awareness"] += 2; raw["Professionalism"] += 2; raw["Conflict Navigation"] += 2; raw["Ethical Courage"] += 2; }
+            if (ep8Choice === 'E') { raw["Assertiveness"] += 2; raw["Ethical Courage"] += 1; raw["Judgement"] -= 1; }
+
+            // Ep 9
+            const ep9Map = {
+                A: { "Boundaries": 1, "Ethical Courage": -2 },
+                B: { "Assertiveness": 2, "Professionalism": 1 },
+                C: { "Judgement": 2, "Professionalism": 2 },
+                D: { "Professionalism": 2, "Ethical Courage": 2, "Conflict Navigation": 1 },
+                E: { "Relationship Awareness": 2, "Judgement": 1 },
+                F: { "Relationship Awareness": 1, "Judgement": 0 }
+            };
+
+            const pAct = ep9Map[state.episodes.ep9.primary];
+            if (pAct) {
+                Object.keys(pAct).forEach(k => raw[k] += pAct[k]);
+            }
+            const sAct = ep9Map[state.episodes.ep9.secondary];
+            if (sAct) {
+                Object.keys(sAct).forEach(k => raw[k] += sAct[k] * 0.5);
+            }
+
+            // Ep 10
+            const ep10Choice = state.episodes.ep10.choice;
+            if (ep10Choice === 'A') { raw["Professionalism"] -= 1; raw["Assertiveness"] -= 1; raw["Ethical Courage"] -= 2; }
+            if (ep10Choice === 'B') { raw["Professionalism"] -= 1; raw["Judgement"] -= 1; }
+            if (ep10Choice === 'C') { raw["Assertiveness"] += 2; raw["Professionalism"] += 2; raw["Ethical Courage"] += 1; }
+            if (ep10Choice === 'D') { raw["Ethical Courage"] += 2; raw["Assertiveness"] += 2; raw["Communication Adaptability"] -= 1; }
+            if (ep10Choice === 'E') { raw["Judgement"] += 2; raw["Professionalism"] += 2; raw["Communication Adaptability"] += 2; raw["Ethical Courage"] += 2; }
+
+            // Normalize 0 to 100
+            const normalized = {};
+            DIMENSIONS.forEach(dim => {
+                const val = Math.min(100, Math.max(0, Math.round(50 + (raw[dim] * 6.5))));
+                normalized[dim] = val;
+            });
+
+            return normalized;
+        }
+
+        function drawRadarChart(scores) {
+            const canvas = document.getElementById('radarCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const center = width / 2;
+            const radius = center - 50;
+            const totalAxes = DIMENSIONS.length;
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Web circles (20%, 40%, 60%, 80%, 100%)
+            for (let level = 1; level <= 5; level++) {
+                const r = (radius / 5) * level;
+                ctx.beginPath();
+                ctx.arc(center, center, r, 0, 2 * Math.PI);
+                ctx.strokeStyle = 'rgba(197, 160, 89, 0.15)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+            }
+
+            // Draw axes
+            DIMENSIONS.forEach((dim, i) => {
+                const angle = (Math.PI * 2 / totalAxes) * i - (Math.PI / 2);
+                const x = center + radius * Math.cos(angle);
+                const y = center + radius * Math.sin(angle);
+
+                ctx.beginPath();
+                ctx.moveTo(center, center);
+                ctx.lineTo(x, y);
+                ctx.strokeStyle = 'rgba(197, 160, 89, 0.25)';
+                ctx.stroke();
+
+                // Axis labels
+                const labelX = center + (radius + 24) * Math.cos(angle);
+                const labelY = center + (radius + 20) * Math.sin(angle);
+                ctx.fillStyle = '#9ba3b4';
+                ctx.font = '10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                // Shorten labels for display
+                let shortLabel = dim.replace("Communication ", "").replace(" Awareness", "");
+                ctx.fillText(shortLabel, labelX, labelY);
+            });
+
+            // Draw score polygon
+            ctx.beginPath();
+            DIMENSIONS.forEach((dim, i) => {
+                const score = scores[dim] || 50;
+                const r = (radius * score) / 100;
+                const angle = (Math.PI * 2 / totalAxes) * i - (Math.PI / 2);
+                const x = center + r * Math.cos(angle);
+                const y = center + r * Math.sin(angle);
+
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(197, 160, 89, 0.35)';
+            ctx.fill();
+            ctx.strokeStyle = '#e5c158';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        function determineArchetype(scores) {
+            const P = scores["Professionalism"];
+            const J = scores["Judgement"];
+            const A = scores["Assertiveness"];
+            const B = scores["Boundaries"];
+            const RA = scores["Relationship Awareness"];
+            const CA = scores["Communication Adaptability"];
+            const CN = scores["Conflict Navigation"];
+            const EC = scores["Ethical Courage"];
+
+            if (P >= 65 && J >= 65 && EC >= 65) {
+                return {
+                    title: "THE PRINCIPLED PROFESSIONAL",
+                    description: "You tend to rely on standards, evidence and integrity when pressure increases. You value high procedural accuracy and duty of care."
+                };
+            }
+            if (RA >= 65 && CN >= 65 && CA >= 65) {
+                return {
+                    title: "THE OFFICE DIPLOMAT",
+                    description: "You tend to read people carefully, manage tension and search for workable solutions across complex interpersonal environments."
+                };
+            }
+            if (RA >= 65 && EC >= 65 && B < 55) {
+                return {
+                    title: "THE PEOPLE PROTECTOR",
+                    description: "You strongly protect and support others in times of crisis, though you may sometimes take on more personal responsibility than is sustainable."
+                };
+            }
+            if (A >= 65 && B >= 65 && RA < 55) {
+                return {
+                    title: "THE INDEPENDENT OPERATOR",
+                    description: "You are willing to protect your position and speak clearly, though relational consequences may sometimes receive less priority."
+                };
+            }
+            if (J >= 65 && A < 55) {
+                return {
+                    title: "THE CAREFUL OBSERVER",
+                    description: "You prefer to understand all available evidence before acting, though this deliberate pace can sometimes delay urgent conversations."
+                };
+            }
+            return {
+                title: "THE ADAPTIVE COMMUNICATOR",
+                description: "You tend to adjust your approach dynamically based on organizational context while maintaining solid professional standards."
+            };
+        }
+
+        function getPersonalValueText(key) {
+            const map = {
+                A: 'Being respected',
+                B: 'Being liked',
+                C: 'Doing excellent work',
+                D: 'Protecting my boundaries',
+                E: 'Building trustworthy relationships',
+                F: 'Doing what is right'
+            };
+            return map[key] || 'Not specified';
+        }
+
+        function getSaidVsDidInterpretation(valKey, scores) {
+            if (valKey === 'D') {
+                return `Your choices suggest that although <strong>protecting boundaries</strong> mattered to you at the beginning, you frequently prioritized relationships (${scores["Relationship Awareness"]}/100) and ethical duty when others were under pressure.`;
+            }
+            return `Your stated focus on <strong>${getPersonalValueText(valKey)}</strong> remained actively tested throughout the simulation, balancing against Ethical Courage (${scores["Ethical Courage"]}/100) and Relationship Awareness (${scores["Relationship Awareness"]}/100).`;
+        }
+
+        // --- REPLAY CARDS GENERATION ---
+        function renderReplayCards() {
+            const epTitles = [
+                "Welcome to Nexus", "The List", "The Deadline", "The Favourite", "The Joke",
+                "Don’t Tell Anyone", "The Dinner", "What Did You See?", "The Warning", "The Client"
+            ];
+
+            return epTitles.map((title, idx) => {
+                const epNum = idx + 1;
+                const epKey = `ep${epNum}`;
+                const choiceStr = getOriginalChoiceText(epKey);
+
+                return `
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion('acc_${epKey}')">
+                            <span><strong>EPISODE ${epNum}:</strong> ${title}</span>
+                            <span style="color: var(--gold-primary); font-size: 0.8rem;">▼</span>
+                        </div>
+                        <div class="accordion-body" id="acc_${epKey}">
+                            <p style="font-size: 0.85rem; margin-bottom: 8px;"><strong>YOUR SELECTION:</strong> ${choiceStr}</p>
+                            
+                            <div style="margin-top: 10px;">
+                                <span class="tag-box tag-protected">WHAT THIS MAY HAVE PROTECTED</span>
+                                <p style="font-size: 0.85rem; color: #ccc;">Fairness, professional standards, organizational accuracy, or personal safety.</p>
+                            </div>
+
+                            <div style="margin-top: 8px;">
+                                <span class="tag-box tag-risked">WHAT IT MAY HAVE RISKED</span>
+                                <p style="font-size: 0.85rem; color: #ccc;">Informal rapport, management approval, timing, or workplace harmony.</p>
+                            </div>
+
+                            <div style="margin-top: 8px;">
+                                <span class="tag-box tag-perspective">ANOTHER PERSPECTIVE</span>
+                                <p style="font-size: 0.85rem; color: #ccc;">Workplace communication involves constant trade-offs; prioritizing transparency can create political friction, while prioritizing harmony can obscure facts.</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- COPY SUMMARY TO CLIPBOARD ---
+        function copyReflectionSummary() {
+            const scores = calculateScores();
+            const archetype = determineArchetype(scores);
+            
+            let summaryText = `=== NEXUS: THE GLASS OFFICE — REFLECTION SUMMARY ===\n`;
+            summaryText += `Student: ${state.studentInfo.name || 'Anonymous'} | Class: ${state.studentInfo.group || 'N/A'}\n\n`;
+            summaryText += `WORKPLACE ARCHETYPE: ${archetype.title}\n`;
+            summaryText += `${archetype.description}\n\n`;
+            summaryText += `STARTING VALUE: ${getPersonalValueText(state.baseline.personalValue)}\n\n`;
+            summaryText += `TRAIT PROFILE SCORES:\n`;
+            DIMENSIONS.forEach(d => summaryText += `- ${d}: ${scores[d]}/100\n`);
+            summaryText += `\nMY NEXUS NOTES:\n${state.reflections.nexusNotes || 'N/A'}\n\n`;
+            summaryText += `REPLAY MOMENT (${state.reflections.changeEpId}):\n`;
+            summaryText += `Action: ${state.reflections.changeReplayAction || 'N/A'}\n`;
+            summaryText += `Why: ${state.reflections.changeWhy || 'N/A'}\n\n`;
+            summaryText += `PERSONAL ACTION STATEMENT:\n"After Nexus, in a difficult workplace situation, I want to remember to ${state.reflections.actionStatement || '...'}"\n`;
+
+            navigator.clipboard.writeText(summaryText).then(() => {
+                showToast("Summary Copied to Clipboard");
+            }).catch(err => {
+                alert("Copy failed. Please copy manually.");
+            });
+        }
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            render();
+        };
+    </script>
+</body>
+</html>
