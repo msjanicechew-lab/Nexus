@@ -1,0 +1,2270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>NEXUS: THE GLASS OFFICE</title>
+  <style>
+    :root {
+      --bg-dark: #0b0e14;
+      --bg-card: rgba(18, 24, 38, 0.85);
+      --bg-card-solid: #121824;
+      --border-gold: rgba(212, 175, 55, 0.25);
+      --gold-accent: #d4af37;
+      --gold-hover: #f3e5ab;
+      --text-main: #f0f2f5;
+      --text-muted: #9ea7b8;
+      --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      touch-action: manipulation;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.08) 0%, transparent 70%),
+        radial-gradient(circle at 80% 80%, rgba(30, 40, 60, 0.5) 0%, transparent 50%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      padding-bottom: 60px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* APP CONTAINER */
+    #app {
+      width: 100%;
+      max-width: 680px;
+      padding: 16px;
+      margin: 0 auto;
+    }
+
+    /* HEADER & PROGRESS STRIP */
+    header.top-bar {
+      width: 100%;
+      max-width: 680px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 14, 20, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-gold);
+      padding: 12px 16px;
+      margin-bottom: 20px;
+    }
+
+    .ep-title-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .ep-badge {
+      font-family: var(--font-serif);
+      color: var(--gold-accent);
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .user-tag {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .progress-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .progress-step {
+      opacity: 0.4;
+      white-space: nowrap;
+      padding: 2px 4px;
+      transition: all 0.3s ease;
+    }
+
+    .progress-step.completed {
+      opacity: 0.9;
+      color: var(--gold-accent);
+    }
+
+    .progress-step.current {
+      opacity: 1;
+      color: #ffffff;
+      font-weight: bold;
+      border-bottom: 2px solid var(--gold-accent);
+    }
+
+    /* CARD / CONTAINER STYLES */
+    .glass-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-gold);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--font-serif);
+      color: #ffffff;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    h1 { font-size: 1.8rem; color: var(--gold-accent); }
+    h2 { font-size: 1.4rem; border-bottom: 1px solid var(--border-gold); padding-bottom: 8px; }
+    h3 { font-size: 1.15rem; color: var(--gold-accent); margin-top: 16px; }
+
+    p { margin-bottom: 16px; font-size: 0.98rem; color: var(--text-main); }
+    .subtitle { color: var(--text-muted); font-size: 0.9rem; font-style: italic; margin-bottom: 20px; }
+
+    /* FORM ELEMENTS */
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--text-main);
+      font-size: 0.95rem;
+    }
+
+    input[type="text"], textarea, select {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 4px;
+      color: var(--text-main);
+      padding: 12px;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--gold-accent);
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-block;
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #1f2838 0%, #121824 100%);
+      border: 1px solid var(--gold-accent);
+      color: var(--gold-accent);
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+      margin-top: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .btn:hover, .btn:active {
+      background: var(--gold-accent);
+      color: #0b0e14;
+    }
+
+    .btn-secondary {
+      border-color: var(--text-muted);
+      color: var(--text-muted);
+      background: transparent;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.1);
+      color: #ffffff;
+    }
+
+    /* CHOICE OPTIONS (RADIOS / CHECKBOXES) */
+    .option-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .option-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      min-height: 48px;
+    }
+
+    .option-card:hover {
+      border-color: rgba(212, 175, 55, 0.5);
+      background: rgba(212, 175, 55, 0.05);
+    }
+
+    .option-card.selected {
+      border-color: var(--gold-accent);
+      background: rgba(212, 175, 55, 0.12);
+    }
+
+    .option-card input[type="radio"],
+    .option-card input[type="checkbox"] {
+      margin-top: 3px;
+      accent-color: var(--gold-accent);
+      width: 18px;
+      height: 18px;
+    }
+
+    .option-text {
+      flex: 1;
+      font-size: 0.95rem;
+    }
+
+    /* LIKERT SCALE */
+    .likert-group {
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .likert-label {
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+      color: #ffffff;
+    }
+
+    .likert-options {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .likert-btn {
+      flex: 1;
+      min-height: 44px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 4px;
+      color: var(--text-main);
+      font-size: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .likert-btn.selected {
+      background: var(--gold-accent);
+      color: #0b0e14;
+      font-weight: bold;
+      border-color: var(--gold-accent);
+    }
+
+    /* REORDER / RANKING LIST */
+    .rank-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .rank-item {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 6px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      touch-action: none;
+    }
+
+    .rank-controls {
+      display: flex;
+      gap: 6px;
+    }
+
+    .rank-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--text-main);
+      width: 36px;
+      height: 36px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .rank-btn:disabled {
+      opacity: 0.2;
+      cursor: default;
+    }
+
+    /* SLIDERS */
+    .slider-group {
+      margin-bottom: 20px;
+    }
+
+    .slider-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+      accent-color: var(--gold-accent);
+    }
+
+    /* WAITING OVERLAY */
+    .waiting-screen {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .waiting-title {
+      font-size: 1.5rem;
+      color: var(--gold-accent);
+      letter-spacing: 2px;
+      margin-bottom: 12px;
+    }
+
+    .waiting-subtitle {
+      color: var(--text-muted);
+      margin-bottom: 30px;
+    }
+
+    /* RADAR CHART */
+    .chart-container {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      margin: 20px auto;
+    }
+
+    canvas#radarChart {
+      width: 100%;
+      height: auto;
+    }
+
+    /* REPLAY CARDS */
+    .replay-card {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .replay-header {
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.03);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .replay-body {
+      padding: 16px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .replay-card.expanded .replay-body {
+      display: block;
+    }
+
+    .badge-tag {
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background: rgba(212, 175, 55, 0.15);
+      color: var(--gold-accent);
+      border: 1px solid var(--border-gold);
+    }
+
+    /* PROMPT STARTERS */
+    .starters-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .starter-chip {
+      font-size: 0.78rem;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      padding: 4px 10px;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .starter-chip:hover {
+      border-color: var(--gold-accent);
+      color: #ffffff;
+    }
+
+    /* PRINT & SUMMARY STYLES */
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+      header.top-bar, .no-print {
+        display: none !important;
+      }
+      .glass-card {
+        background: #ffffff !important;
+        color: #000000 !important;
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+      }
+      h1, h2, h3, h4 { color: #000000 !important; }
+      .badge-tag { border-color: #333 !important; color: #000 !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="top-bar" id="topBar" style="display: none;">
+    <div class="ep-title-bar">
+      <span class="ep-badge" id="epBadge">EPISODE 1 OF 10</span>
+      <span class="user-tag" id="userTag"></span>
+    </div>
+    <div class="progress-strip" id="progressStrip">
+      <span class="progress-step" id="pstep-1">01</span> —
+      <span class="progress-step" id="pstep-2">02</span> —
+      <span class="progress-step" id="pstep-3">03</span> —
+      <span class="progress-step" id="pstep-4">04</span> —
+      <span class="progress-step" id="pstep-5">05</span> —
+      <span class="progress-step" id="pstep-6">06</span> —
+      <span class="progress-step" id="pstep-7">07</span> —
+      <span class="progress-step" id="pstep-8">08</span> —
+      <span class="progress-step" id="pstep-9">09</span> —
+      <span class="progress-step" id="pstep-10">10</span> —
+      <span class="progress-step" id="pstep-11">FINAL</span>
+    </div>
+  </header>
+
+  <main id="app">
+    <!-- Dynamic views render here -->
+  </main>
+
+  <script>
+    /* Global Application State */
+    const STORAGE_KEY = 'nexus_glass_office_state';
+
+    const defaultState = {
+      step: 'START', // START, BASELINE_VALUE, BASELINE_LIKERT, EP1..EP10, FINALE, POST_LIKERT, RESULTS
+      waiting: false,
+      user: { name: '', group: '' },
+      baselineValue: '',
+      beliefPre: {},
+      scores: {
+        P: 0,  // Professionalism
+        J: 0,  // Judgement
+        A: 0,  // Assertiveness
+        B: 0,  // Boundaries
+        RA: 0, // Relationship Awareness
+        CA: 0, // Communication Adaptability
+        CN: 0, // Conflict Navigation
+        EC: 0  // Ethical Courage
+      },
+      episodes: {
+        ep1: { choice: null, text: '' },
+        ep2: { sliders: [3, 3, 3], concerns: [], conclusion: null, choice: null, influences: [] },
+        ep3: { choice: null, journal1: '', journal2: '' },
+        ep4: { choice: null, ranking: ['career opportunity', 'fairness', 'loyalty', 'relationship with Daniel', 'relationship with management'] },
+        ep5: { choices: [], journal1: '', journal2: '' },
+        ep6: { choice: null, responsibility: null },
+        ep7: { choice: null, factors: [] },
+        ep8: { choice: null, journal1: '', journal2: '' },
+        ep9: { primary: null, secondary: null, journal1: '', journal2: '' },
+        ep10: { choice: null, followUp: null },
+        finale: { ranking: ['Speak to Adrian', 'Respond to the confidential support channel', 'Check on Trifiny', 'Finish the project', 'Speak with Aisha', 'Leave and document everything first'] }
+      },
+      beliefPost: {},
+      postChangeText: '',
+      nexusNotes: '',
+      replayChange: { ep: '1', newText: '', reason: '' },
+      actionStatement: ''
+    };
+
+    let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || JSON.parse(JSON.stringify(defaultState));
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function resetSimulation() {
+      if (confirm('Are you sure you want to restart? All saved progress will be cleared.')) {
+        localStorage.removeItem(STORAGE_KEY);
+        state = JSON.parse(JSON.stringify(defaultState));
+        render();
+      }
+    }
+
+    /* Scoring Weights Table */
+    function applyScoreDelta(delta) {
+      for (const [key, val] of Object.entries(delta)) {
+        if (state.scores[key] !== undefined) {
+          state.scores[key] += val;
+        }
+      }
+    }
+
+    function calculateTotalScores() {
+      // Reset
+      state.scores = { P: 0, J: 0, A: 0, B: 0, RA: 0, CA: 0, CN: 0, EC: 0 };
+      
+      const ep = state.episodes;
+
+      // Ep 1
+      const ep1Scores = {
+        A: { RA: 2, J: -1, B: -1 },
+        B: { J: 2, RA: 1, CA: 1 },
+        C: { B: 2, RA: -1, CA: -1 },
+        D: { J: 2, B: 2, P: 1 }
+      };
+      if (ep.ep1.choice && ep1Scores[ep.ep1.choice]) applyScoreDelta(ep1Scores[ep.ep1.choice]);
+
+      // Ep 2 CYOA
+      const ep2Scores = {
+        A: { RA: 1, J: -2, P: -1 },
+        B: { B: 1, J: 1 },
+        C: { J: 2, A: 1 },
+        D: { P: 2, J: 2, CA: 1 },
+        E: { RA: 2, B: -1 }
+      };
+      if (ep.ep2.choice && ep2Scores[ep.ep2.choice]) applyScoreDelta(ep2Scores[ep.ep2.choice]);
+
+      // Ep 3
+      const ep3Scores = {
+        A: { RA: 2, P: 1, B: -2 },
+        B: { P: 1, A: 1, J: -1 },
+        C: { J: 2, P: 2, A: 2, CA: 2 },
+        D: { CA: 2, CN: 1 },
+        E: { RA: 2, J: 1, P: 1 }
+      };
+      if (ep.ep3.choice && ep3Scores[ep.ep3.choice]) applyScoreDelta(ep3Scores[ep.ep3.choice]);
+
+      // Ep 4
+      const ep4Scores = {
+        A: { RA: 2, A: 1, P: 1 },
+        B: { RA: -1, A: -1 },
+        C: { A: 2, B: 1, RA: -1 },
+        D: { J: 2, RA: 2, CN: 1 },
+        E: { B: 2, A: 1, RA: -1 }
+      };
+      if (ep.ep4.choice && ep4Scores[ep.ep4.choice]) applyScoreDelta(ep4Scores[ep.ep4.choice]);
+
+      // Ep 5 (Multiple choice max 2)
+      const ep5Scores = {
+        A: { CN: -1, EC: -2 },
+        B: { A: 2, EC: 2 },
+        C: { J: 2, P: 1 },
+        D: { RA: 2, EC: 1 },
+        E: { B: 2 },
+        F: { P: 2, EC: 2, CN: 2 }
+      };
+      (ep.ep5.choices || []).forEach(c => {
+        if (ep5Scores[c]) applyScoreDelta(ep5Scores[c]);
+      });
+
+      // Ep 6
+      const ep6Scores = {
+        A: { B: 1, RA: 2, P: -1 },
+        B: { RA: -2, A: 1 },
+        C: { RA: 2, P: 2, CN: 2, EC: 1 },
+        D: { J: 2, P: 1, RA: 1 },
+        E: { J: 2, RA: 2, CN: 1 }
+      };
+      if (ep.ep6.choice && ep6Scores[ep.ep6.choice]) applyScoreDelta(ep6Scores[ep.ep6.choice]);
+
+      // Ep 7
+      const ep7Scores = {
+        A: { B: 1, EC: -1 },
+        B: { J: 2, P: 2 },
+        C: { RA: 2, EC: 1 },
+        D: { P: 2, EC: 2, CN: 2 },
+        E: { A: 2, EC: 2, J: -1 }
+      };
+      if (ep.ep7.choice && ep7Scores[ep.ep7.choice]) applyScoreDelta(ep7Scores[ep.ep7.choice]);
+
+      // Ep 8
+      const ep8Scores = {
+        A: { RA: 1, EC: -1 },
+        B: { J: 2, RA: 2, P: 2, EC: 1 },
+        C: { EC: 2, A: 2, RA: -1 },
+        D: { RA: 2, P: 2, CN: 2, EC: 2 },
+        E: { A: 2, EC: 1, J: -1 }
+      };
+      if (ep.ep8.choice && ep8Scores[ep.ep8.choice]) applyScoreDelta(ep8Scores[ep.ep8.choice]);
+
+      // Ep 9 (Primary = 100%, Secondary = 50%)
+      const ep9Scores = {
+        A: { B: 1, EC: -2 },
+        B: { A: 2, P: 1 },
+        C: { J: 2, P: 2 },
+        D: { P: 2, EC: 2, CN: 1 },
+        E: { RA: 2, J: 1 },
+        F: { RA: 1 }
+      };
+      if (ep.ep9.primary && ep9Scores[ep.ep9.primary]) applyScoreDelta(ep9Scores[ep.ep9.primary]);
+      if (ep.ep9.secondary && ep9Scores[ep.ep9.secondary]) {
+        const sec = ep9Scores[ep.ep9.secondary];
+        for (const [k, v] of Object.entries(sec)) {
+          state.scores[k] = (state.scores[k] || 0) + (v * 0.5);
+        }
+      }
+
+      // Ep 10
+      const ep10Scores = {
+        A: { P: -1, A: -1, EC: -2 },
+        B: { P: -1, J: -1 },
+        C: { A: 2, P: 2, EC: 1 },
+        D: { EC: 2, A: 2, CA: -1 },
+        E: { J: 2, P: 2, CA: 2, EC: 2 }
+      };
+      if (ep.ep10.choice && ep10Scores[ep.ep10.choice]) applyScoreDelta(ep10Scores[ep.ep10.choice]);
+
+      // Normalize to 0-100 (Max theoretical raw score ~18, Min ~ -5)
+      const normalized = {};
+      const bounds = {
+        P: { min: -3, max: 15 },
+        J: { min: -3, max: 15 },
+        A: { min: -3, max: 13 },
+        B: { min: -3, max: 10 },
+        RA: { min: -3, max: 15 },
+        CA: { min: -2, max: 8 },
+        CN: { min: -2, max: 8 },
+        EC: { min: -4, max: 14 }
+      };
+
+      for (const [dim, val] of Object.entries(state.scores)) {
+        const b = bounds[dim] || { min: 0, max: 10 };
+        let pct = Math.round(((val - b.min) / (b.max - b.min)) * 100);
+        pct = Math.max(15, Math.min(95, pct)); // Keep bounds aesthetically clean for radar chart
+        normalized[dim] = pct;
+      }
+
+      return normalized;
+    }
+
+    /* Archetype Logic */
+    function getArchetype(scores) {
+      const { P, J, A, B, RA, CA, CN, EC } = scores;
+
+      if (P >= 65 && J >= 65 && EC >= 65) {
+        return {
+          title: "THE PRINCIPLED PROFESSIONAL",
+          desc: "You tend to rely on standards, evidence and integrity when pressure increases."
+        };
+      }
+      if (RA >= 65 && CN >= 60 && CA >= 60) {
+        return {
+          title: "THE OFFICE DIPLOMAT",
+          desc: "You tend to read people carefully, manage tension and search for workable solutions."
+        };
+      }
+      if (RA >= 65 && EC >= 60 && B < 55) {
+        return {
+          title: "THE PEOPLE PROTECTOR",
+          desc: "You strongly protect and support others, but may sometimes take on more responsibility than is sustainable."
+        };
+      }
+      if (A >= 65 && B >= 60 && RA < 55) {
+        return {
+          title: "THE INDEPENDENT OPERATOR",
+          desc: "You are willing to protect your position and speak clearly, though relational consequences may sometimes receive less attention."
+        };
+      }
+      if (J >= 65 && A < 55) {
+        return {
+          title: "THE CAREFUL OBSERVER",
+          desc: "You prefer to understand the evidence before acting, though this can sometimes delay difficult conversations."
+        };
+      }
+      return {
+        title: "THE ADAPTIVE COMMUNICATOR",
+        desc: "You tend to adjust your approach based on context while maintaining professional standards."
+      };
+    }
+
+    /* Likert Statements */
+    const LIKERT_STATEMENTS = [
+      "A good employee should follow instructions from senior staff.",
+      "Staying silent means staying neutral.",
+      "Professionalism means being available when work needs you.",
+      "If I witness unfair treatment, I should speak up.",
+      "Workplace friendships can affect professional judgement.",
+      "Power affects how a message is interpreted."
+    ];
+
+    /* TRADE-OFF DATA FOR REPLAY */
+    const REPLAY_DATA = {
+      1: {
+        title: "Welcome to Nexus",
+        options: {
+          A: { text: "“Yes. Tell me everything. I need to know who I’m dealing with.”", protected: "Early insider awareness & network insights", risked: "Objectivity, professional distance & susceptibility to gossip", perspective: "May be seen as eager to build alliances, or easily influenced by informal power." },
+          B: { text: "“I’ll come for lunch, but I’d rather form my own impressions first.”", protected: "Independent judgement & friendly openness", risked: " Vern Huey’s total confidence", perspective: "Demonstrates balanced engagement without committing to a workplace faction." },
+          C: { text: "“I’d rather keep personal friendship separate from work.”", protected: "Clear professional boundaries & impartiality", risked: "Relational warmth & informal trust", perspective: "Establishes clean boundaries early, though may appear distant to colleagues." },
+          D: { text: "“Tell me about the culture and how things work, but I don’t want gossip about individuals.”", protected: "Ethical boundaries & cultural awareness", risked: "Informal political intel", perspective: "Signals high professionalism and standard-setting right from Day 1." }
+        }
+      },
+      2: {
+        title: "The List",
+        options: {
+          A: { text: "Forward everything to someone you trust.", protected: "Shared awareness with ally", risked: "Confidentiality & document control", perspective: "Action driven by trust, but accelerates unverified information leakage." },
+          B: { text: "Keep the material privately but do not share it.", protected: "Information containment & self-protection", risked: "Early intervention", perspective: "Prudent wait-and-see stance while evidence remains incomplete." },
+          C: { text: "Ask Vern Huey where the document originated.", protected: "Fact verification at source", risked: "Revealing what you know", perspective: "Direct inquiry that tests the reliability of informal channels." },
+          D: { text: "Ask Aisha whether there is anything the team officially needs to know.", protected: "Official channels & formal clarity", risked: "Managerial defensiveness", perspective: "Respects formal hierarchy while seeking official clarification." },
+          E: { text: "Speak to Trifiny because her name appears in the document.", protected: "Peer support & direct relationship", risked: "Spreading unverified anxiety", perspective: "Prioritises personal empathy over institutional protocol." }
+        }
+      },
+      3: {
+        title: "The Deadline",
+        options: {
+          A: { text: "Finish Daniel’s section yourself.", protected: "Client deadline & team deliverable", risked: "Personal boundaries & burnout", perspective: "High commitment to output, but enables colleague accountability gaps." },
+          B: { text: "Tell Aisha that Daniel has not delivered.", protected: "Accountability & manager visibility", risked: "Peer relationship with Daniel", perspective: "Clear upward reporting, though may be viewed as unsupportive of team members." },
+          C: { text: "Explain that the brief changed and propose a realistic revised plan.", protected: "Project integrity, accuracy & clear expectations", risked: "Immediate client pushback", perspective: "Professional problem-solving that addresses root causes rather than symptoms." },
+          D: { text: "Ask Trifiny to temporarily accept Daniel’s original section.", protected: "Immediate momentum & temporary buffer", risked: "Deliverable quality & client expectations", perspective: "Pragmatic compromise to buy time under crisis conditions." },
+          E: { text: "Contact Daniel first before deciding.", protected: "Peer trust & complete information", risked: "Tight timeline & submission deadline", perspective: "Values fairness to colleague before escalating or acting." }
+        }
+      },
+      4: {
+        title: "The Favourite",
+        options: {
+          A: { text: "“I didn’t know. I can ask Aisha what happened.”", protected: "Relational harmony & transparency", risked: "Personal authority", perspective: "De-escalates tension by deferring to formal authority." },
+          B: { text: "“Management probably had a reason.”", protected: "Managerial alignment", risked: "Peer empathy & authentic connection", perspective: "Defends institutional logic, potentially alienating affected peer." },
+          C: { text: "“I didn’t choose this, but I’m still taking the opportunity.”", protected: "Career progress & direct honesty", risked: "Relational warmth with Daniel", perspective: "Transparent ownership of career boundaries and decisions." },
+          D: { text: "“Tell me what happened first.”", protected: "Contextual understanding & peer listening", risked: "Defensive positioning", perspective: "Prioritises gathering full relational context before taking a stand." },
+          E: { text: "“If you think it was unfair, you should raise it yourself.”", protected: "Personal boundaries & direct responsibility", risked: "Colleague support", perspective: "Encourages peer agency while keeping oneself out of mediation." }
+        }
+      },
+      5: {
+        title: "The Joke",
+        options: {
+          B: { text: "Tell the group the joke has gone too far.", protected: "Dignity & immediate group boundary", risked: "Social friction & group standing", perspective: "Direct interventions interrupt workplace exclusion clearly." },
+          C: { text: "Save screenshots or evidence.", protected: "Factual documentation & future proof", risked: "Immediate mitigation", perspective: "Methodical preparation for potential formal escalation." },
+          D: { text: "Check on Daniel privately.", protected: "Peer emotional wellbeing & safety", risked: "Addressing group behavior directly", perspective: "Provides crucial relational support behind the scenes." },
+          F: { text: "Raise the pattern with an appropriate person.", protected: "Workplace standards & systemic reporting", risked: "Being labeled as an escalator", perspective: "Addresses institutional responsibility through appropriate oversight." }
+        }
+      },
+      6: {
+        title: "Don't Tell Anyone",
+        options: {
+          A: { text: "Protect Daniel’s confidence completely.", protected: "Personal confidence & peer trust", risked: "Team planning & operational awareness", perspective: "Values individual confidentiality as an absolute priority." },
+          B: { text: "Tell Aisha he is considering resigning.", protected: "Managerial forewarning", risked: "Peer trust & explicit promise", perspective: "Prioritises organizational awareness over peer confidentiality." },
+          C: { text: "Encourage Daniel to speak to Aisha himself and offer support.", protected: "Peer agency & institutional resolution", risked: "Delayed management awareness", perspective: "Empowers peer to lead their own workplace decisions." },
+          D: { text: "Tell Aisha only that Daniel appears under significant pressure.", protected: "Balanced warning without breaking explicit secret", risked: "Complete transparency", perspective: "Nuanced communication that signals concern while protecting confidence." },
+          E: { text: "Ask Daniel whether he believes the treatment he is experiencing is bullying before deciding what support is appropriate.", protected: "Accurate problem definition", risked: "Immediate simplicity", perspective: "Ensures issues are accurately identified before choosing remedies." }
+        }
+      },
+      7: {
+        title: "The Dinner",
+        options: {
+          A: { text: "Do nothing unless Trifiny asks.", protected: "Peer autonomy & personal distance", risked: "Timely intervention & support", perspective: "Defers entirely to target's explicit request." },
+          B: { text: "Document what you witnessed.", protected: "Objective factual record", risked: "Immediate direct intervention", perspective: "Ensures evidence exists should formal review occur." },
+          C: { text: "Check on Trifiny privately.", protected: "Peer wellbeing & safety verification", risked: "Addressing perpetrator directly", perspective: "Establishes supportive relational connection first." },
+          D: { text: "Encourage her to consider an appropriate workplace support or reporting channel.", protected: "Institutional support & structured options", risked: "Peer comfort level", perspective: "Connects target with formal safety and support systems." },
+          E: { text: "Confront Adrian yourself.", protected: "Immediate boundary enforcement", risked: " Escalation & peer consent", perspective: "Direct confrontation signals zero tolerance but takes control from target." }
+        }
+      },
+      8: {
+        title: "What Did You See?",
+        options: {
+          A: { text: "Respect her request and do nothing.", protected: "Target agency & immediate preference", risked: "Ongoing workplace safety", perspective: "Strict adherence to peer consent above institutional duty." },
+          B: { text: "Help her document the incidents and understand her support/reporting options.", protected: "Target agency, preparedness & clear options", risked: "Fast reporting escalation", perspective: "Equips peer with tools and clarity without forcing decision." },
+          C: { text: "Report Adrian yourself immediately.", protected: "Immediate organizational escalation", risked: "Target trust & agency", perspective: "Prioritises duty of care and safety over individual request." },
+          D: { text: "Offer to accompany her to HR or another appropriate support channel while letting her decide what to disclose.", protected: "Supported agency & psychological safety", risked: "Immediate resolution", perspective: "Gold-standard balanced advocacy: presence without takeover." },
+          E: { text: "Confront Adrian privately.", protected: "Direct boundary callout", risked: "Evidence integrity & target safety", perspective: "High assertiveness that risks unpredictable pushback." }
+        }
+      },
+      9: {
+        title: "The Warning",
+        options: {
+          A: { text: "Back away.", protected: "Personal job security & probation outcome", risked: "Ethical support & solidarity", perspective: "Self-preservation choice under top-down pressure." },
+          B: { text: "Ask Aisha directly whether your probation review is connected.", protected: "Explicit transparency & boundaries", risked: "Managerial comfort", perspective: "High assertiveness calling out implicit pressure directly." },
+          C: { text: "Document the conversation.", protected: "Personal legal/procedural record", risked: "Immediate active pushback", perspective: "Quietly builds evidence of potential retaliation." },
+          D: { text: "Speak confidentially with an appropriate workplace support/reporting channel.", protected: "Protected institutional disclosure", risked: "Organizational friction", perspective: "Uses designated safety structures to handle potential pressure." },
+          E: { text: "Tell Trifiny what Aisha said.", protected: "Peer transparency & mutual alignment", risked: "Managerial retaliation", perspective: "Values peer solidarity over hierarchical compliance." },
+          F: { text: "Ask Vern Huey what he knows.", protected: "Informal political context", risked: "Information control", perspective: "Gathers intelligence through informal networks." }
+        }
+      },
+      10: {
+        title: "The Client",
+        options: {
+          A: { text: "Follow Adrian’s instruction.", protected: "Short-term authority alignment & silence", risked: "Client trust & professional integrity", perspective: "Compliance prioritizing internal authority over truth." },
+          B: { text: "Present the figure and correct it later.", protected: "Immediate meeting harmony", risked: "Credibility & accurate disclosure", perspective: "Compromise delaying uncomfortable truth." },
+          C: { text: "Tell Aisha you are uncomfortable presenting information you know is inaccurate.", protected: "Personal ethical boundary & internal escalation", risked: "Immediate supervisor alignment", perspective: "Refuses to participate in misrepresentation through upward feedback." },
+          D: { text: "Tell the client immediately.", protected: "Client accuracy & truth", risked: "Team cohesion & internal process", perspective: "External radical transparency prioritizing client truth." },
+          E: { text: "Ask for a short pause to confirm the error and agree on an accurate response.", protected: "Data accuracy, team alignment & client trust", risked: "Meeting flow pace", perspective: "High-level professional composure protecting quality and standards." }
+        }
+      }
+    };
+
+    /* RENDER ENGINE */
+    function render() {
+      const app = document.getElementById('app');
+      const topBar = document.getElementById('topBar');
+      
+      // Update header
+      if (['START', 'BASELINE_VALUE', 'BASELINE_LIKERT'].includes(state.step)) {
+        topBar.style.display = 'none';
+      } else {
+        topBar.style.display = 'block';
+        document.getElementById('userTag').innerText = state.user.name || 'Student';
+        updateProgressStrip();
+      }
+
+      // Check waiting state
+      if (state.waiting) {
+        app.innerHTML = renderWaitingScreen();
+        return;
+      }
+
+      switch (state.step) {
+        case 'START':
+          app.innerHTML = renderStartScreen();
+          break;
+        case 'BASELINE_VALUE':
+          app.innerHTML = renderBaselineValueScreen();
+          break;
+        case 'BASELINE_LIKERT':
+          app.innerHTML = renderBaselineLikertScreen();
+          break;
+        case 'EP1':
+          app.innerHTML = renderEp1Screen();
+          break;
+        case 'EP2':
+          app.innerHTML = renderEp2Screen();
+          break;
+        case 'EP3':
+          app.innerHTML = renderEp3Screen();
+          break;
+        case 'EP4':
+          app.innerHTML = renderEp4Screen();
+          break;
+        case 'EP5':
+          app.innerHTML = renderEp5Screen();
+          break;
+        case 'EP6':
+          app.innerHTML = renderEp6Screen();
+          break;
+        case 'EP7':
+          app.innerHTML = renderEp7Screen();
+          break;
+        case 'EP8':
+          app.innerHTML = renderEp8Screen();
+          break;
+        case 'EP9':
+          app.innerHTML = renderEp9Screen();
+          break;
+        case 'EP10':
+          app.innerHTML = renderEp10Screen();
+          break;
+        case 'FINALE':
+          app.innerHTML = renderFinaleScreen();
+          break;
+        case 'POST_LIKERT':
+          app.innerHTML = renderPostLikertScreen();
+          break;
+        case 'RESULTS':
+          app.innerHTML = renderResultsScreen();
+          setTimeout(drawRadarChart, 100);
+          break;
+        default:
+          app.innerHTML = renderStartScreen();
+      }
+    }
+
+    function updateProgressStrip() {
+      const epBadge = document.getElementById('epBadge');
+      const stepMap = {
+        'EP1': 1, 'EP2': 2, 'EP3': 3, 'EP4': 4, 'EP5': 5,
+        'EP6': 6, 'EP7': 7, 'EP8': 8, 'EP9': 9, 'EP10': 10,
+        'FINALE': 11, 'POST_LIKERT': 11, 'RESULTS': 11
+      };
+      const curNum = stepMap[state.step] || 1;
+      
+      epBadge.innerText = curNum <= 10 ? `EPISODE ${curNum} OF 10` : 'FINAL SUMMARY';
+
+      for (let i = 1; i <= 11; i++) {
+        const el = document.getElementById(`pstep-${i}`);
+        if (!el) continue;
+        el.className = 'progress-step';
+        if (i < curNum) {
+          el.classList.add('completed');
+          el.innerText = i === 11 ? 'FINAL ✓' : `${i < 10 ? '0'+i : i} ✓`;
+        } else if (i === curNum) {
+          el.classList.add('current');
+          el.innerText = i === 11 ? 'FINAL' : `${i < 10 ? '0'+i : i}`;
+        } else {
+          el.innerText = i === 11 ? 'FINAL' : `${i < 10 ? '0'+i : i}`;
+        }
+      }
+    }
+
+    /* WAITING SCREEN */
+    function renderWaitingScreen() {
+      return `
+        <div class="glass-card waiting-screen">
+          <div class="waiting-title">DECISION RECORDED</div>
+          <p style="color: var(--gold-accent); font-size: 1.1rem;">Your workplace profile is developing.</p>
+          <div style="margin: 30px 0; border-top: 1px dashed rgba(212, 175, 55, 0.3); border-bottom: 1px dashed rgba(212, 175, 55, 0.3); padding: 20px 0;">
+            <p class="waiting-subtitle" style="margin-bottom:0;">Please pause here and wait for your instructor before continuing.</p>
+          </div>
+          <button class="btn" onclick="continueToNextEpisode()">CONTINUE TO NEXT EPISODE</button>
+        </div>
+      `;
+    }
+
+    function continueToNextEpisode() {
+      state.waiting = false;
+      const flow = ['EP1', 'EP2', 'EP3', 'EP4', 'EP5', 'EP6', 'EP7', 'EP8', 'EP9', 'EP10', 'FINALE', 'POST_LIKERT', 'RESULTS'];
+      const idx = flow.indexOf(state.step);
+      if (idx !== -1 && idx < flow.length - 1) {
+        state.step = flow[idx + 1];
+      }
+      saveState();
+      render();
+    }
+
+    /* STEP 0: START SCREEN */
+    function renderStartScreen() {
+      return `
+        <div class="glass-card" style="text-align: center; padding-top: 40px; padding-bottom: 40px;">
+          <h1 style="font-size: 2.2rem; margin-bottom: 4px;">NEXUS</h1>
+          <div style="font-family: var(--font-serif); color: var(--gold-accent); letter-spacing: 3px; font-size: 0.9rem; margin-bottom: 24px;">THE GLASS OFFICE</div>
+          <p class="subtitle">Everyone is smiling. Everyone wants something.<br>Your choices will shape your workplace communication profile.</p>
+          
+          <div style="text-align: left; margin-top: 30px;">
+            <label>Name / Nickname *</label>
+            <input type="text" id="inputName" value="${state.user.name || ''}" placeholder="Enter your name or preferred alias">
+            
+            <label>Class / Group (Optional)</label>
+            <input type="text" id="inputGroup" value="${state.user.group || ''}" placeholder="e.g. Section B / Team 3">
+            
+            <div style="background: rgba(212, 175, 55, 0.08); border-left: 3px solid var(--gold-accent); padding: 12px; margin: 20px 0; font-size: 0.88rem; color: var(--text-muted);">
+              Note: There may not always be one perfect answer. Choose what you would genuinely do.
+            </div>
+
+            <button class="btn" onclick="submitStart()">BEGIN</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function submitStart() {
+      const name = document.getElementById('inputName').value.trim();
+      if (!name) {
+        alert('Please enter your name or nickname to proceed.');
+        return;
+      }
+      state.user.name = name;
+      state.user.group = document.getElementById('inputGroup').value.trim();
+      state.step = 'BASELINE_VALUE';
+      saveState();
+      render();
+    }
+
+    /* STEP 0.1: BASELINE VALUE */
+    function renderBaselineValueScreen() {
+      const opts = [
+        { id: 'A', text: 'Being respected' },
+        { id: 'B', text: 'Being liked' },
+        { id: 'C', text: 'Doing excellent work' },
+        { id: 'D', text: 'Protecting my boundaries' },
+        { id: 'E', text: 'Building trustworthy relationships' },
+        { id: 'F', text: 'Doing what is right' }
+      ];
+
+      return `
+        <div class="glass-card">
+          <div class="ep-badge" style="margin-bottom: 8px;">BEFORE-NEXUS BASELINE</div>
+          <h2>Personal Value Assessment</h2>
+          <p>What matters MOST to you when starting a new job?</p>
+
+          <div class="option-group">
+            ${opts.map(o => `
+              <div class="option-card ${state.baselineValue === o.id ? 'selected' : ''}" onclick="selectBaselineVal('${o.id}')">
+                <input type="radio" name="baseVal" ${state.baselineValue === o.id ? 'checked' : ''}>
+                <div class="option-text">${o.id}. ${o.text}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <button class="btn" onclick="submitBaselineValue()">NEXT: BELIEF SCALE</button>
+        </div>
+      `;
+    }
+
+    function selectBaselineVal(val) {
+      state.baselineValue = val;
+      render();
+    }
+
+    function submitBaselineValue() {
+      if (!state.baselineValue) {
+        alert('Please select the option that matters most to you.');
+        return;
+      }
+      state.step = 'BASELINE_LIKERT';
+      saveState();
+      render();
+    }
+
+    /* STEP 0.2: BASELINE LIKERT */
+    function renderBaselineLikertScreen() {
+      return `
+        <div class="glass-card">
+          <div class="ep-badge" style="margin-bottom: 8px;">BEFORE-NEXUS BASELINE</div>
+          <h2>Workplace Belief Scale</h2>
+          <p class="subtitle">Indicate your agreement with each statement (1 = Strongly Disagree, 5 = Strongly Agree).</p>
+
+          ${LIKERT_STATEMENTS.map((stmt, idx) => `
+            <div class="likert-group">
+              <div class="likert-label">${idx + 1}. ${stmt}</div>
+              <div class="likert-options">
+                ${[1,2,3,4,5].map(num => `
+                  <div class="likert-btn ${state.beliefPre[idx] === num ? 'selected' : ''}" onclick="selectLikertPre(${idx}, ${num})">
+                    <span>${num}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `).join('')}
+
+          <button class="btn" onclick="submitBaselineLikert()">ENTER NEXUS SIMULATION</button>
+        </div>
+      `;
+    }
+
+    function selectLikertPre(idx, val) {
+      state.beliefPre[idx] = val;
+      render();
+    }
+
+    function submitBaselineLikert() {
+      for (let i = 0; i < LIKERT_STATEMENTS.length; i++) {
+        if (!state.beliefPre[i]) {
+          alert('Please answer all belief scale statements before starting.');
+          return;
+        }
+      }
+      state.step = 'EP1';
+      saveState();
+      render();
+    }
+
+    /* EPISODE 1 */
+    function renderEp1Screen() {
+      const ep = state.episodes.ep1;
+      const opts = [
+        { id: 'A', text: '“Yes. Tell me everything. I need to know who I’m dealing with.”' },
+        { id: 'B', text: '“I’ll come for lunch, but I’d rather form my own impressions first.”' },
+        { id: 'C', text: '“I’d rather keep personal friendship separate from work.”' },
+        { id: 'D', text: '“Tell me about the culture and how things work, but I don’t want gossip about individuals.”' }
+      ];
+
+      return `
+        <div class="glass-card">
+          <h2>EPISODE 1: Welcome to Nexus</h2>
+          <p style="font-size: 1.05rem; margin-top: 14px;">Vern Huey offers to tell you how things “really work” at Nexus.</p>
+          
+          <h3 style="margin-bottom: 12px;">How do you respond?</h3>
+          <div class="option-group">
+            ${opts.map(o => `
+              <div class="option-card ${ep.choice === o.id ? 'selected' : ''}" onclick="selectEp1Choice('${o.id}')">
+                <input type="radio" name="ep1Choice" ${ep.choice === o.id ? 'checked' : ''}>
+                <div class="option-text"><strong>${o.id}.</strong> ${o.text}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <label>What made you choose that? (Micro-reflection)</label>
+          <textarea id="ep1Text" placeholder="Briefly explain your reasoning...">${ep.text || ''}</textarea>
+
+          <button class="btn" onclick="submitEp1()">SUBMIT DECISION</button>
+        </div>
+      `;
+    }
+
+    function selectEp1Choice(val) {
+      state.episodes.ep1.choice = val;
+      render();
+    }
+
+    function submitEp1() {
+      const ep = state.episodes.ep1;
+      ep.text = document.getElementById('ep1Text').value.trim();
+      if (!ep.choice) {
+        alert('Please select a response.');
+        return;
+      }
+      state.waiting = true;
+      saveState();
+      render();
+    }
+
+    /* EPISODE 2 */
+    function renderEp2Screen() {
+      const ep = state.episodes.ep2;
+      const concernsList = [
+        'unclear source', 'second-hand claims', 'missing page',
+        'inconsistent formatting', 'no official reference number',
+        'contradictory official information', 'suspicious document version',
+        'lack of confirmation', 'none of these'
+      ];
+      const conclusions = [
+        { id: 'A', text: 'Aisha is definitely being replaced.' },
+        { id: 'B', text: 'Trifiny has already been promoted.' },
+        { id: 'C', text: 'A leadership review appears to be happening, but the outcome is unconfirmed.' },
+        { id: 'D', text: 'The leaked document must be completely fake.' },
+        { id: 'E', text: 'There is not enough information to conclude anything.' }
+      ];
+      const cyoaOpts = [
+        { id: 'A', text: 'Forward everything to someone you trust.' },
+        { id: 'B', text: 'Keep the material privately but do not share it.' },
+        { id: 'C', text: 'Ask Vern Huey where the document originated.' },
+        { id: 'D', text: 'Ask Aisha whether there is anything the team officially needs to know.' },
+        { id: 'E', text: 'Speak to Trifiny because her name appears in the document.' }
+      ];
+      const influenceOpts = ['confidentiality', 'curiosity', 'loyalty', 'fairness', 'self-protection', 'need for accurate information'];
+
+      return `
+        <div class="glass-card">
+          <h2>EPISODE 2: The List</h2>
+          <p class="subtitle">Investigative Episode — Evaluate external projector evidence.</p>
+
+          <h3>Part A — Source Reliability</h3>
+          <div class="slider-group">
+            <label>1. Workplace Chat Reliability (1 - 5): <span style="color:var(--gold-accent);">${ep.sliders[0]}</span></label>
+            <input type="range" min="1" max="5" value="${ep.sliders[0]}" onchange="updateEp2Slider(0, this.value)">
+            <div class="slider-labels"><span>1 (Very Unreliable)</span><span>5 (Very Reliable)</span></div>
+          </div>
+
+          <div class="slider-group">
+            <label>2. Leaked Document Reliability (1 - 5): <span style="color:var(--gold-accent);">${ep.sliders[1]}</span></label>
+            <input type="range" min="1" max="5" value="${ep.sliders[1]}" onchange="updateEp2Slider(1, this.value)">
+            <div class="slider-labels"><span>1 (Very Unreliable)</span><span>5 (Very Reliable)</span></div>
+          </div>
+
+          <div class="slider-group">
+            <label>3. Official HR Email Reliability (1 - 5): <span style="color:var(--gold-accent);">${ep.sliders[2]}</span></label>
+            <input type="range" min="1" max="5" value="${ep.sliders[2]}" onchange="updateEp2Slider(2, this.value)">
+            <div class="slider-labels"><span>1 (Very Unreliable)</span><span>5 (Very Reliable)</span></div>
+          </div>
+
+          <h3>What concerns did you notice? (Select multiple)</h3>
+          <div class="option-group">
+            ${concernsList.map(c => `
+              <div class="option-card ${ep.concerns.includes(c) ? 'selected' : ''}" onclick="toggleEp2Concern('${c}')">
+                <input type="checkbox" ${ep.concerns.includes(c) ? 'checked' : ''}>
+                <div class="option-text">${c}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <h3>What is the strongest conclusion you can make right now?</h3>
+          <div class="option-group">
+            ${conclusions.map(c => `
+              <div class="option-card ${ep.conclusion === c.id ? 'selected' : ''}" onclick="selectEp2Conclusion('${c.id}')">
+                <input type="radio" name="ep2Conc" ${ep.conclusion === c.id ? 'checked' : ''}>
+                <div class="option-text"><strong>${c.id}.</strong> ${c.text}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <h3>What do you do next?</h3>
+          <div class="option-group">
+            ${cyoaOpts.map(o => `
+              <div class="option-card ${ep.choice === o.id ? 'selected' : ''}" onclick="selectEp2Choice('${o.id}')">
+                <input type="radio" name="ep2Choice" ${ep.choice === o.id ? 'checked' : ''}>
+                <div class="option-text"><strong>${o.id}.</strong> ${o.text}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <h3>What influenced you most? (Choose up to TWO)</h3>
+          <div class="option-group">
+            ${influenceOpts.map(inf => `
+              <div class="option-card ${ep.influences.includes(inf) ? 'selected' : ''}" onclick="toggleEp2Influence('${inf}')">
+                <input type="checkbox" ${ep.influences.includes(inf) ? 'checked' : ''}>
+                <div class="option-text">${inf}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <button class="btn" onclick="submitEp2()">SUBMIT DECISION</button>
+        </div>
+      `;
+    }
+
+    function updateEp2Slider(idx, val) {
+      state.episodes.ep2.sliders[idx] = parseInt(val);
+      render();
+    }
+
+    function toggleEp2Concern(item) {
+      const arr = state.episodes.ep2.concerns;
+      const idx = arr.indexOf(item);
+      if (idx === -1) arr.push(item);
+      else arr.splice(idx, 1);
+      render();
+    }
+
+    function selectEp2Conclusion(val) {
+      state.episodes.ep2.conclusion = val;
+      render();
+    }
+
+    function selectEp2Choice(val) {
+      state.episodes.ep2.choice = val;
+      render();
+    }
+
+    function toggleEp2Influence(item) {
+      const arr = state.episodes.ep2.influences;
+      const idx = arr.indexOf(item);
+      if (idx === -1) {
+        if (arr.length >= 2) return;
+        arr.push(item);
+      } else {
+        arr.splice(idx, 1);
+      }
+      render();
+    }
+
+    function submitEp2() {
+      const ep = state.episodes.ep2;
+      if (!ep.conclusion || !ep.choice) {
+        alert('Please complete all single choice questions.');
+        return;
+      }
+      state.waiting = true;
+      saveState();
+      render();
+    }
+
+    /* EPISODE 3 */
+    function renderEp3Screen() {
+      const ep = state.episodes.ep3;
+      const opts = [
+        { id: 'A', text: 'Finish Daniel’s section yourself.' },
+        { id: 'B', text: 'Tell Aisha that Daniel has not delivered.' },
+        { id: 'C', text: 'Explain that the brief changed and propose a realistic revised plan.' },
+        { id: 'D', text: 'Ask Trifiny to temporarily accept Daniel’s original section.' },
+        { id: 'E', text: 'Contact Daniel first before deciding.' }
+      ];
+
+      return `
+        <div class="glass-card">
+          <h2>EPISODE 3: The Deadline</h2>
+          <p>The client changed the brief. Daniel’s work was based on the earlier version. He is now offline and the deadline is approaching.</p>
+          
+          <h3>What do you do?</h3>
+          <div class="option-group">
+            ${opts.map(o => `
+              <div class="option-card ${ep.choice === o.id ? 'selected' : ''}" onclick="selectEp3Choice('${o.id}')">
+                <input type="radio" name="ep3Choice" ${ep.choice === o.id ? 'checked' : ''}>
+                <div class="option-text"><strong>${o.id}.</strong> ${o.text}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-gold); padding: 16px; border-radius: 6px; margin-top: 20px;">
+            <div style="font-family: var(--font-serif); color: var(--gold-accent); margin-bottom: 8px;">PRIVATE NEXUS JOURNAL</div>
+            
+            <label>You had limited time and incomplete information. What influenced your decision most? *</label>
+            <textarea id="ep3J1" placeholder="Reflect on your motivation...">${ep.journal1 || ''}</textarea>
+
+            <label>What additional information might have changed your decision? *</label>
+            <textarea id="ep3J2" placeholder="What missing facts mattered?">${ep.journal2 || ''}</textarea>
+          </div>
+
+          <button class="btn" onclick="submitEp3()">SUBMIT DECISION</button>
+        </div>
+      `;
+    }
+
+    function selectEp3Choice(val) {
+      state.episodes.ep3.choice = val;
+      render();
+    }
+
+    function submitEp3() {
+      const ep = state.episodes.ep3;
+      ep.journal1 = document.getElementById('ep3J1').value.trim();
+      ep.journal2 = document.getElementById('ep3J2').value.trim();
+
+      if (!ep.choice || !ep.journal1 || !ep.journal2) {
+        alert('Please make a choice and complete both journal prompts.');
+        return;
+      }
+      state.waiting = true;
+      saveState();
+      render();
+    }
+
+    /* EPISODE 4 */
+    function renderEp4Screen() {
+      const ep = state.episodes.ep4;
+      const opts = [
+        { id: 'A', text: '“I didn’t know. I can ask Aisha what happened.”' },
+        { id: 'B', text: '“Management probably had a reason.”' },
+        { id: 'C', text: '“I didn’t choose this, but I’m still taking the opportunity.”' },
+        { id: 'D', text: '“Tell me what happened first.”' },
+        { id: 'E', text: '“If you think it was unfair, you should raise it yourself.”' }
+      ];
+
+      return `
+        <div class="glass-card">
+          <h2>EPISODE 4: The Favourite</h2>
+          <p>Daniel discovers that you replaced him for an important presentation opportunity.</p>
+
+          <h3>What do you say?</h3>
+          <div class="option-group">
+            ${opts.map(o => `
+              <div class="option-card ${ep.choice === o.id ? 'selected' : ''}" onclick="selectEp4Choice('${o.id}')">
+                <input type="radio" name="ep4Choice" ${ep.choice === o.id ? 'checked' : ''}>
+                <div class="option-text"><strong>${o.id}.</strong> ${o.text}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <h3>What mattered most to you? (Rank in priority order)</h3>
+          <p class="subtitle">Use ▲ and ▼ to reorder items from top priority to lowest.</p>
+          <div class="rank-list">
+            ${ep.ranking.map((item, idx) => `
+              <div class="rank-item">
+                <span><strong>${idx + 1}.</strong> ${item}</span>
+                <div class="rank-controls">
+                  <button class="rank-btn" onclick="moveEp4Rank(${idx}, -1)" ${idx === 0 ? 'disabled' : ''}>▲</button>
+                  <button class="rank-btn" onclick="moveEp4Rank(${idx}, 1)" ${idx === ep.ranking.length - 1 ? 'disabled' : ''}>▼</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <button class="btn" onclick="submitEp4()">SUBMIT DECISION</button>
+        </div>
+      `;
+    }
+
+    function selectEp4Choice(val) {
+      state.episodes.ep4.choice = val;
+      render();
+    }
+
+    function moveEp4Rank(idx, dir) {
+      const arr = state.episodes.ep4.ranking;
+      const temp = arr[idx];
+      arr[idx] = arr[idx + dir];
+      arr[idx + dir] = temp;
+      render();
+    }
+
+    function submitEp4() {
+      if (!state.episodes.ep4.choice) {
+        alert('Please choose how you respond to Daniel.');
+        return;
+      }
+      state.waiting = true;
+      saveState();
+      render();
+    }
+
+    /* EPISODE 5 */
+    function renderEp5Screen() {
+      const ep = state.episodes.ep5;
+      const opts = [
+        { id: 'A', text: 'Stay silent.' },
+        { id: 'B', text: 'Tell the group the joke has gone too far.' },
+        { id: 'C', text: 'Save screenshots or evidence.' },
+        { id: 'D', text: 'Check on Daniel privately.' },
+        { id: 'E', text: 'Leave the group.' },
+        { id: 'F', text: 'Raise the pattern with an appropriate person.' }
+      ];
+
+      return `
+        <div class="glass-card">
+          <h2>EPISODE 5: The Joke</h2>
+          <p>You have seen Daniel mocked repeatedly, excluded from meetings, and discussed in a private group chat.</p>
+
+          <h3>Choose up to TWO actions:</h3>
+          <div class="option-group">
+            ${opts.map(o => `
+              <div class="option-card ${ep.choices.includes(o.id) ? 'selected' : ''}" onclick="toggleEp5Choice('${o.id}')">
+                <input type="checkbox" ${ep.choices.includes(o.id) ? 'checked' : ''}>
+                <div class="option-text"><strong>${o.id}.</strong> ${o.text}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-gold); padding: 16px; border-radius: 6px; margin-top: 20px;">
+            <div style="font-family: var(--font-serif); color: var(--gold-accent); margin-bottom: 8px;">PRIVATE NEXUS JOURNAL</div>
+
+            <label>At what point did Daniel’s treatment stop feeling like “just joking” to you? Why? *</label>
+            <textarea id="ep5J1" placeholder="Reflect on the line between banter and exclusion...">${ep.journal1 || ''}</textarea>
+
+            <label>What might make someone stay silent in real life? *</label>
+            <textarea id="ep5J2" placeholder="Reflect on real-world silence...">${ep.journal2 || ''}</textarea>
+          </div>
+
+          <button class="btn" onclick="submitEp5()">SUBMIT DECISION</button>
+        </div>
+      `;
+    }
+
+    function toggleEp5Choice(id) {
+      const arr = state.episodes.ep5.choices;
+      const idx = arr.indexOf(id);
+      if (idx === -1) {
+        if (arr.length >= 2) return;
+        arr.push(id);
+      } else {
+        arr.splice(idx, 1);
+      }
+      render();
+    }
+
+    function submitEp5() {
+      const ep = state.episodes.ep5;
+      ep.journal1 = document.getElementById('ep5J1').value.trim();
+      ep.journal2 = document.getElementById('ep5J2').value.trim();
+
+      if (ep.choices.length === 0 || !ep.journal1 || !ep.journal2) {
+        alert('Please select at least 1 action and answer both journal prompts.');
+        return;
+      }
+      state.waiting = true;
+      saveState();
+      render();
+    }
+
+    /* EPISODE 6 */
+    function renderEp6Screen() {
+      const ep = state.episodes.ep6;
+      const opts = [
+        { id: 'A', text: 'Protect Daniel’s confidence completely.' },
+        { id: 'B', text: 'Tell Aisha he is considering resigning.' },
+        { id: 'C', text: 'Encourage Daniel to speak to Aisha himself and offer support.' },
+        { id: 'D', text: 'Tell Aisha only that Daniel appears under significant pressure.' },
+        { id: 'E', text: 'Ask Daniel whether he believes the treatment he is experiencing is bullying before deciding what support is appropriate.' }
+      ];
+      const respOpts = ['confidentiality', 'friendship', 'team wellbeing', 'duty of care', 'professional responsibility'];
+
+      return `
+        <div class="glass-card">
+          <h2>EPISODE 6: Don’t Tell Anyone</h2>
+          <p>Daniel tells you he is considering resigning and asks you not to tell anyone. Later Aisha asks whether he has said anything.</p>
+
+          <h3>What do you do?</h3>
+          <div class="option-group">
+            ${opts.map(o => `
+              <div class="option-card ${ep.choice === o.id ? 'selected' : ''}" onclick="selectEp6Choice('${o.id}')">
+                <input type="radio" name="ep6Choice" ${ep.choice === o.id ? 'checked' : ''}>
+                <div class="option-text"><strong>${o.id}.</strong> ${o.text}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <h3>Which responsibility feels strongest here?</h3>
+          <div class="option-group">
+            ${respOpts.map(r => `
+              <div class="option-card ${ep.responsibility === r ? 'selected' : ''}" onclick="selectEp6Resp('${r}')">
+                <input type="radio" name="ep6Resp" ${ep.responsibility === r ? 'checked' : ''}>
+                <div class="option-text">${r}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <button class="btn" onclick="submitEp6()">SUBMIT DECISION</button>
+        </div>
+      `;
+    }
+
+    function selectEp6Choice(val) {
+      state.episodes.ep6.choice = val;
+      render();
+    }
+
+    function selectEp6Resp(val) {
+      state.episodes.ep6.responsibility = val;
+      render();
+    }
+
+    function submitEp6() {
+      const ep = state.episodes.ep6;
+      if (!ep.choice || !ep.responsibility) {
+        alert('Please complete both choices.');
+        return;
+      }
+      state.waiting = true;
+      saveState();
+      render();
+    }
+
+    /* EPISODE 7 */
+    function renderEp7Screen() {
+      const ep = state.episodes.ep7;
+      const opts = [
+        { id: 'A', text: 'Do nothing unless Trifiny asks.' },
+        { id: 'B', text: 'Document what you witnessed.' },
+        { id: 'C', text: 'Check on Trifiny privately.' },
+        { id: 'D', text: 'Encourage her to consider an appropriate workplace support or reporting channel.' },
+        { id: 'E', text: 'Confront Adrian yourself.' }
+      ];
+      const factorOpts = ['intent', 'impact', 'consent', 'power difference', 'repetition', 'workplace policy'];
+
+      return `
+        <div class="glass-card">
+          <h2>EPISODE 7: The Dinner</h2>
+          <p>You witnessed Adrian behaving in a way that appeared to make Trifiny uncomfortable.</p>
+
+          <h3>What do you do?</h3>
+          <div class="option-group">
+            ${opts.map(o => `
+              <div class="option-card ${ep.choice === o.id ? 'selected' : ''}" onclick="selectEp7Choice('${o.id}')">
+                <input type="radio" name="ep7Choice" ${ep.choice === o.id ? 'checked' : ''}>
+                <div class="option-text"><strong>${o.id}.</strong> ${o.text}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <h3>Which factors matter most? (Choose up to THREE)</h3>
+          <div class="option-group">
+            ${factorOpts.map(f => `
+              <div class="option-card ${ep.factors.includes(f) ? 'selected' : ''}" onclick="toggleEp7Factor('${f}')">
+                <input type="checkbox" ${ep.factors.includes(f) ? 'checked' : ''}>
+                <div class="option-text">${f}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <button class="btn" onclick="submitEp7()">SUBMIT DECISION</button>
+        </div>
+      `;
+    }
+
+    function selectEp7Choice(val) {
+      state.episodes.ep7.choice = val;
+      render();
+    }
+
+    function toggleEp7Factor(f) {
+      const arr = state.episodes.ep7.factors;
+      const idx = arr.indexOf(f);
+      if (idx === -1) {
+        if (arr.length >= 3) return;
+        arr.push(f);
+      } else {
+        arr.splice(idx, 1);
+      }
+      render();
+    }
+
+    function submitEp7() {
+      if (!state.episodes.ep7.choice) {
+        alert('Please select an action.');
+        return;
+      }
+      state.waiting = true;
+      saveState();
+      render();
+    }
+
+    /* EPISODE 8 */
+    function renderEp8Screen() {
+      const ep = state.episodes.ep8;
+      const opts = [
+        { id: 'A', text: 'Respect her request and do nothing.' },
+        { id: 'B', text: 'Help her document the incidents and understand her support/reporting options.' },
+        { id: 'C', text: 'Report Adrian yourself immediately.' },
+        { id: 'D', text: 'Offer to accompany her to HR or another appropriate support channel while letting her decide what to disclose.' },
+        { id: 'E', text: 'Confront Adrian privately.' }
+      ];
+
+      return `
+        <div class="glass-card">
+          <h2>EPISODE 8: What Did You See?</h2>
+          <p>Trifiny reveals that the dinner was not the first incident. She asks you not to report anything yet.</p>
+
+          <h3>How do you support Trifiny without removing her agency?</h3>
+          <div class="option-group">
+            ${opts.map(o => `
+              <div class="option-card ${ep.choice === o.id ? 'selected' : ''}" onclick="selectEp8Choice('${o.id}')">
+                <input type="radio" name="ep8Choice" ${ep.choice === o.id ? 'checked' : ''}>
+                <div class="option-text"><strong>${o.id}.</strong> ${o.text}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-gold); padding: 16px; border-radius: 6px; margin-top: 20px;">
+            <div style="font-family: var(--font-serif); color: var(--gold-accent); margin-bottom: 8px;">PRIVATE NEXUS JOURNAL</div>
+
+            <label>What do you think Trifiny needs most from a colleague at this moment? *</label>
+            <textarea id="ep8J1" placeholder="Reflect on peer support needs...">${ep.journal1 || ''}</textarea>
+
+            <label>Where is the line between supporting someone and taking control of their decision? *</label>
+            <textarea id="ep8J2" placeholder="Reflect on personal agency vs intervention...">${ep.journal2 || ''}</textarea>
+          </div>
+
+          <button class="btn" onclick="submitEp8()">SUBMIT DECISION</button>
+        </div>
+      `;
+    }
+
+    function selectEp8Choice(val) {
+      state.episodes.ep8.choice = val;
+      render();
+    }
+
+    function submitEp8() {
+      const ep = state.episodes.ep8;
+      ep.journal1 = document.getElementById('ep8J1').value.trim();
+      ep.journal2 = document.getElementById('ep8J2').value.trim();
+
+      if (!ep.choice || !ep.journal1 || !ep.journal2) {
+        alert('Please make a selection and complete both journal prompts.');
+        return;
+      }
+      state.waiting = true;
+      saveState();
+      render();
+    }
+
+    /* EPISODE 9 */
+    function renderEp9Screen() {
+      const ep = state.episodes.ep9;
+      const opts = [
+        { id: 'A', text: 'Back away.' },
+        { id: 'B', text: 'Ask Aisha directly whether your probation review is connected.' },
+        { id: 'C', text: 'Document the conversation.' },
+        { id: 'D', text: 'Speak confidentially with an appropriate workplace support/reporting channel.' },
+        { id: 'E', text: 'Tell Trifiny what Aisha said.' },
+        { id: 'F', text: 'Ask Vern Huey what he knows.' }
+      ];
+
+      return `
+        <div class="glass-card">
+          <h2>EPISODE 9: The Warning</h2>
+          <p>Aisha tells you to be careful about getting involved and reminds you that your probation review is next month.</p>
+
+          <h3>Select PRIMARY Action (Full Weighting)</h3>
+          <div class="option-group">
+            ${opts.map(o => `
+              <div class="option-card ${ep.primary === o.id ? 'selected' : ''}" onclick="selectEp9Primary('${o.id}')">
+                <input type="radio" name="ep9Pri" ${ep.primary === o.id ? 'checked' : ''}>
+                <div class="option-text"><strong>${o.id}.</strong> ${o.text}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <h3>Select SECONDARY Action (50% Weighting)</h3>
+          <div class="option-group">
+            ${opts.map(o => `
+              <div class="option-card ${ep.secondary === o.id ? 'selected' : ''}" onclick="selectEp9Secondary('${o.id}')">
+                <input type="radio" name="ep9Sec" ${ep.secondary === o.id ? 'checked' : ''}>
+                <div class="option-text"><strong>${o.id}.</strong> ${o.text}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border-gold); padding: 16px; border-radius: 6px; margin-top: 20px;">
+            <div style="font-family: var(--font-serif); color: var(--gold-accent); margin-bottom: 8px;">PRIVATE NEXUS JOURNAL</div>
+            <p style="font-style: italic; color: var(--gold-accent); font-size: 0.9rem;">“Be careful about getting involved in things you don’t fully understand. Your probation review is next month.”</p>
+
+            <label>What did you hear beneath the words? *</label>
+            <textarea id="ep9J1" placeholder="Interpret the subtext...">${ep.journal1 || ''}</textarea>
+
+            <label>Would the same words feel different if they came from a colleague instead of your manager? Why? *</label>
+            <textarea id="ep9J2" placeholder="Reflect on power dynamics...">${ep.journal2 || ''}</textarea>
+          </div>
+
+          <button class="btn" onclick="submitEp9()">SUBMIT DECISION</button>
+        </div>
+      `;
+    }
+
+    function selectEp9Primary(val) {
+      state.episodes.ep9.primary = val;
+      if (state.episodes.ep9.secondary === val) state.episodes.ep9.secondary = null;
+      render();
+    }
+
+    function selectEp9Secondary(val) {
+      if (state.episodes.ep9.primary === val) {
+        alert('Secondary action must be different from primary action.');
+        return;
+      }
+      state.episodes.ep9.secondary = val;
+      render();
+    }
+
+    function submitEp9() {
+      const ep = state.episodes.ep9;
+      ep.journal1 = document.getElementById('ep9J1').value.trim();
+      ep.journal2 = document.getElementById('ep9J2').value.trim();
+
+      if (!ep.primary || !ep.secondary || !ep.journal1 || !ep.journal2) {
+        alert('Please select primary & secondary actions and complete both journal prompts.');
+        return;
+      }
+      state.waiting = true;
+      saveState();
+      render();
+    }
+
+    /* EPISODE 10 */
+    function renderEp10Screen() {
+      const ep = state.episodes.ep10;
+      const opts = [
+        { id: 'A', text: 'Follow Adrian’s instruction.' },
+        { id: 'B', text: 'Present the figure and correct it later.' },
+        { id: 'C', text: 'Tell Aisha you are uncomfortable presenting information you know is inaccurate.' },
+        { id: 'D', text: 'Tell the client immediately.' },
+        { id: 'E', text: 'Ask for a short pause to confirm the error and agree on an accurate response.' }
+      ];
+      const matterOpts = ['loyalty', 'accuracy', 'authority', 'reputation', 'ethics', 'client trust'];
+
+      return `
+        <div class="glass-card">
+          <h2>EPISODE 10: The Client</h2>
+          <p>Daniel discovers that an important client figure is wrong. Adrian wants the team to proceed anyway.</p>
+
+          <h3>What do you do?</h3>
+          <div class="option-group">
+            ${opts.map(o => `
+              <div class="option-card ${ep.choice === o.id ? 'selected' : ''}" onclick="selectEp10Choice('${o.id}')">
+                <input type="radio" name="ep10Choice" ${ep.choice === o.id ? 'checked' : ''}>
+                <div class="option-text"><strong>${o.id}.</strong> ${o.text}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <h3>What mattered most here? (Choose one)</h3>
+          <div class="option-group">
+            ${matterOpts.map(m => `
+              <div class="option-card ${ep.followUp === m ? 'selected' : ''}" onclick="selectEp10FollowUp('${m}')">
+                <input type="radio" name="ep10Fol" ${ep.followUp === m ? 'checked' : ''}>
+                <div class="option-text">${m}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <button class="btn" onclick="submitEp10()">SUBMIT DECISION</button>
+        </div>
+      `;
+    }
+
+    function selectEp10Choice(val) {
+      state.episodes.ep10.choice = val;
+      render();
+    }
+
+    function selectEp10FollowUp(val) {
+      state.episodes.ep10.followUp = val;
+      render();
+    }
+
+    function submitEp10() {
+      const ep = state.episodes.ep10;
+      if (!ep.choice || !ep.followUp) {
+        alert('Please complete both choices.');
+        return;
+      }
+      state.waiting = true;
+      saveState();
+      render();
+    }
+
+    /* FINALE SCREEN */
+    function renderFinaleScreen() {
+      const fin = state.episodes.finale;
+
+      return `
+        <div class="glass-card" style="border: 1px solid var(--gold-accent); background: radial-gradient(circle, rgba(30,20,10,0.8) 0%, rgba(10,12,20,0.95) 100%);">
+          <div class="ep-badge" style="letter-spacing: 3px; color: var(--gold-accent);">FINAL EPISODE</div>
+          <h1 style="font-size: 1.8rem; margin-top: 4px;">Friday, 4:55 PM</h1>
+          <p style="font-size: 1.1rem; color: #ffffff;">Everything needs your attention.<br>But you can only do one thing first.</p>
+
+          <p class="subtitle">Drag/reorder these six actions into your immediate priority order (1 = First Action).</p>
+
+          <div class="rank-list">
+            ${fin.ranking.map((item, idx) => `
+              <div class="rank-item" style="border-color: rgba(212,175,55,0.4);">
+                <span><strong>${idx + 1}.</strong> ${item}</span>
+                <div class="rank-controls">
+                  <button class="rank-btn" onclick="moveFinaleRank(${idx}, -1)" ${idx === 0 ? 'disabled' : ''}>▲</button>
+                  <button class="rank-btn" onclick="moveFinaleRank(${idx}, 1)" ${idx === fin.ranking.length - 1 ? 'disabled' : ''}>▼</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <button class="btn" onclick="submitFinale()">SUBMIT FINAL PRIORITIES</button>
+        </div>
+      `;
+    }
+
+    function moveFinaleRank(idx, dir) {
+      const arr = state.episodes.finale.ranking;
+      const temp = arr[idx];
+      arr[idx] = arr[idx + dir];
+      arr[idx + dir] = temp;
+      render();
+    }
+
+    function submitFinale() {
+      state.step = 'POST_LIKERT';
+      saveState();
+      render();
+    }
+
+    /* POST LIKERT & REFLECTION */
+    function renderPostLikertScreen() {
+      return `
+        <div class="glass-card">
+          <div class="ep-badge">POST-NEXUS ASSESSMENT</div>
+          <h2>Workplace Belief Scale (Revisited)</h2>
+          <p class="subtitle">Indicate your agreement with each statement after experiencing Nexus.</p>
+
+          ${LIKERT_STATEMENTS.map((stmt, idx) => `
+            <div class="likert-group">
+              <div class="likert-label">${idx + 1}. ${stmt}</div>
+              <div class="likert-options">
+                ${[1,2,3,4,5].map(num => `
+                  <div class="likert-btn ${state.beliefPost[idx] === num ? 'selected' : ''}" onclick="selectLikertPost(${idx}, ${num})">
+                    <span>${num}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `).join('')}
+
+          <label>What changed most in your thinking? (Optional)</label>
+          <textarea id="postChangeText" placeholder="Reflect on how your workplace beliefs evolved...">${state.postChangeText || ''}</textarea>
+
+          <button class="btn" onclick="submitPostLikert()">GENERATE MY COMMUNICATION PROFILE</button>
+        </div>
+      `;
+    }
+
+    function selectLikertPost(idx, val) {
+      state.beliefPost[idx] = val;
+      render();
+    }
+
+    function submitPostLikert() {
+      for (let i = 0; i < LIKERT_STATEMENTS.length; i++) {
+        if (!state.beliefPost[i]) {
+          alert('Please answer all belief statements.');
+          return;
+        }
+      }
+      state.postChangeText = document.getElementById('postChangeText').value.trim();
+      state.step = 'RESULTS';
+      saveState();
+      render();
+    }
+
+    /* RESULTS & RADAR CHART SCREEN */
+    function renderResultsScreen() {
+      const finalScores = calculateTotalScores();
+      const archetype = getArchetype(finalScores);
+      
+      const valMap = {
+        'A': 'Being respected',
+        'B': 'Being liked',
+        'C': 'Doing excellent work',
+        'D': 'Protecting my boundaries',
+        'E': 'Building trustworthy relationships',
+        'F': 'Doing what is right'
+      };
+      const initialValText = valMap[state.baselineValue] || 'Not specified';
+
+      return `
+        <div class="glass-card" style="text-align: center;">
+          <div class="ep-badge">FINAL RESULTS</div>
+          <h1 style="margin-bottom: 4px;">YOUR WORKPLACE COMMUNICATION PROFILE</h1>
+          <p class="subtitle">${state.user.name} | Nexus Simulation Companion</p>
+
+          <div style="background: rgba(212, 175, 55, 0.1); border: 1px solid var(--border-gold); padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
+            <div style="font-size: 0.8rem; letter-spacing: 2px; color: var(--gold-accent);">COMMUNICATION ARCHETYPE</div>
+            <h2 style="border: none; padding: 0; margin: 6px 0; font-size: 1.6rem; color: #ffffff;">${archetype.title}</h2>
+            <p style="margin: 0; font-size: 0.95rem; color: var(--text-main);">${archetype.desc}</p>
+          </div>
+
+          <div class="chart-container">
+            <canvas id="radarChart" width="360" height="360"></canvas>
+          </div>
+
+          <!-- WHAT YOU SAID VS WHAT YOU DID -->
+          <div style="text-align: left; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); padding: 18px; border-radius: 6px; margin: 24px 0;">
+            <h3 style="margin-top:0;">What You Said vs What You Did</h3>
+            <p style="font-size: 0.9rem; margin-bottom: 8px;"><strong>BEFORE NEXUS Stated Value:</strong> "${initialValText}"</p>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 12px;">
+              Boundaries: ${finalScores.B} | Relationship Awareness: ${finalScores.RA} | Ethical Courage: ${finalScores.EC} | Professionalism: ${finalScores.P}
+            </p>
+            <div style="font-size: 0.88rem; font-style: italic; color: var(--gold-hover); border-left: 2px solid var(--gold-accent); padding-left: 10px;">
+              ${generateAlignmentInterpretation(state.baselineValue, finalScores)}
+            </div>
+          </div>
+
+          <!-- BEFORE VS AFTER BELIEF COMPARISON -->
+          <div style="text-align: left; margin: 24px 0;">
+            <h3>Belief Scale Shift (Before vs After)</h3>
+            ${LIKERT_STATEMENTS.map((stmt, idx) => {
+              const pre = state.beliefPre[idx] || 0;
+              const post = state.beliefPost[idx] || 0;
+              const diff = post - pre;
+              const diffText = diff > 0 ? `+${diff}` : `${diff}`;
+              return `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.85rem;">
+                  <span style="flex:1; padding-right:10px;">${stmt}</span>
+                  <span style="white-space:nowrap; color:var(--gold-accent);">
+                    ${pre}/5 → ${post}/5 <small>(${diffText})</small>
+                  </span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+
+          <!-- DECISION REPLAY -->
+          <div style="text-align: left; margin: 24px 0;">
+            <h3>Decision Replay & Trade-Off Analysis</h3>
+            <p class="subtitle">Tap any card to view what your choice protected, risked, and an alternative perspective.</p>
+            ${renderReplayCards()}
+          </div>
+
+          <!-- ONE DECISION WOULD CHANGE -->
+          <div style="text-align: left; background: rgba(0,0,0,0.3); border: 1px solid var(--border-gold); padding: 18px; border-radius: 6px; margin: 24px 0;">
+            <h3 style="margin-top:0;">One Decision I Would Change</h3>
+            <label>Choose one moment you would replay:</label>
+            <select id="replayEpSelect" onchange="updateReplaySelection(this.value)">
+              ${[1,2,3,4,5,6,7,8,9,10].map(num => `
+                <option value="${num}" ${state.replayChange.ep == num ? 'selected' : ''}>Episode ${num}: ${REPLAY_DATA[num].title}</option>
+              `).join('')}
+            </select>
+
+            <div id="originalChoiceDisplay" style="font-size: 0.88rem; color: var(--gold-hover); margin-bottom: 12px; font-style: italic;">
+              ${getOriginalChoiceText(state.replayChange.ep || 1)}
+            </div>
+
+            <label>If you could replay this moment, what would you do differently? *</label>
+            <textarea id="replayNewText" placeholder="Describe your revised response..." onchange="saveReplayText()">${state.replayChange.newText || ''}</textarea>
+
+            <label>Why? *</label>
+            <textarea id="replayReasonText" placeholder="Explain what changed in your perspective..." onchange="saveReplayText()">${state.replayChange.reason || ''}</textarea>
+          </div>
+
+          <!-- MY NEXUS NOTES -->
+          <div style="text-align: left; margin: 24px 0;">
+            <h3>MY NEXUS NOTES</h3>
+            <p class="subtitle">What did this experience teach you about workplace relationships, communication and power?</p>
+            
+            <div class="starters-container">
+              <span class="starter-chip" onclick="appendStarter('Something that surprised me was... ')">Something that surprised me...</span>
+              <span class="starter-chip" onclick="appendStarter('One decision I struggled with was... ')">One decision I struggled with...</span>
+              <span class="starter-chip" onclick="appendStarter('I realised that power can... ')">I realised that power can...</span>
+              <span class="starter-chip" onclick="appendStarter('I used to think professionalism meant... ')">I used to think professionalism...</span>
+            </div>
+
+            <textarea id="nexusNotes" style="min-height: 140px;" placeholder="Write your full notes here (at least 1,000 characters supported)..." oninput="saveNotes()">${state.nexusNotes || ''}</textarea>
+          </div>
+
+          <!-- PERSONAL ACTION STATEMENT -->
+          <div style="text-align: left; margin: 24px 0;">
+            <h3>PERSONAL ACTION STATEMENT</h3>
+            <label>AFTER NEXUS... “In a difficult workplace situation, I want to remember to...” *</label>
+            <textarea id="actionStatement" placeholder="Complete your statement..." oninput="saveActionStatement()">${state.actionStatement || ''}</textarea>
+          </div>
+
+          <!-- ACTION BUTTONS -->
+          <div class="no-print" style="display: flex; flex-direction: column; gap: 10px; margin-top: 30px;">
+            <button class="btn" onclick="copyReflectionSummary()">COPY MY REFLECTION</button>
+            <button class="btn btn-secondary" onclick="window.print()">PRINT / SAVE AS PDF</button>
+            <button class="btn btn-secondary" style="border-color: #e74c3c; color: #e74c3c;" onclick="resetSimulation()">RESTART SIMULATION</button>
+          </div>
+
+          <div style="margin-top: 20px; font-size: 0.78rem; color: var(--text-muted);">
+            Your responses are stored only on this device unless you choose to copy, print or submit them yourself.
+          </div>
+        </div>
+      `;
+    }
+
+    function generateAlignmentInterpretation(baselineVal, scores) {
+      if (baselineVal === 'D') {
+        return scores.B >= 60 
+          ? "Your stated value (Protecting boundaries) remained closely aligned with your choices throughout the simulation."
+          : "Although boundaries mattered to you at the beginning, you frequently prioritized relationships and peer support under pressure.";
+      }
+      if (baselineVal === 'E') {
+        return scores.RA >= 60
+          ? "Your focus on building trustworthy relationships was strongly reflected in your collaborative decisions."
+          : "While relationship-building was your stated value, operational emergencies often pulled you toward swift task resolution.";
+      }
+      if (baselineVal === 'F') {
+        return scores.EC >= 60
+          ? "Your decisions demonstrated consistent ethical courage and alignment with your stated value of doing what is right."
+          : "Doing what is right proved complex in practice, as office politics and subtle pressures led to pragmatic trade-offs.";
+      }
+      return "Your choices reflect a realistic workplace balance, adapting your core priorities as political and ethical pressure intensified.";
+    }
+
+    function getOriginalChoiceText(epNum) {
+      const epData = state.episodes[`ep${epNum}`];
+      if (!epData) return "";
+      const choiceKey = epData.choice || epData.primary;
+      const replayInfo = REPLAY_DATA[epNum];
+      if (replayInfo && replayInfo.options[choiceKey]) {
+        return `Your Original Choice: "${replayInfo.options[choiceKey].text}"`;
+      }
+      return "Your Original Choice: Multiple selections or custom input recorded.";
+    }
+
+    function updateReplaySelection(val) {
+      state.replayChange.ep = val;
+      render();
+    }
+
+    function saveReplayText() {
+      state.replayChange.newText = document.getElementById('replayNewText').value;
+      state.replayChange.reason = document.getElementById('replayReasonText').value;
+      saveState();
+    }
+
+    function saveNotes() {
+      state.nexusNotes = document.getElementById('nexusNotes').value;
+      saveState();
+    }
+
+    function saveActionStatement() {
+      state.actionStatement = document.getElementById('actionStatement').value;
+      saveState();
+    }
+
+    function appendStarter(text) {
+      const area = document.getElementById('nexusNotes');
+      area.value += (area.value ? '\n' : '') + text;
+      state.nexusNotes = area.value;
+      saveState();
+      area.focus();
+    }
+
+    function toggleReplayCard(el) {
+      el.classList.toggle('expanded');
+    }
+
+    function renderReplayCards() {
+      let html = '';
+      for (let i = 1; i <= 10; i++) {
+        const epData = state.episodes[`ep${i}`];
+        const info = REPLAY_DATA[i];
+        if (!epData || !info) continue;
+
+        const choiceKey = epData.choice || epData.primary;
+        const opt = info.options[choiceKey];
+
+        html += `
+          <div class="replay-card" onclick="toggleReplayCard(this)">
+            <div class="replay-header">
+              <span><strong>EPISODE ${i}:</strong> ${info.title}</span>
+              <span class="badge-tag">${choiceKey || 'Done'}</span>
+            </div>
+            <div class="replay-body">
+              <p><strong>YOUR CHOICE:</strong> ${opt ? opt.text : 'Selected'}</p>
+              ${opt ? `
+                <div style="margin-top: 8px; color: var(--gold-hover);">
+                  <p style="margin-bottom: 4px;"><strong>WHAT THIS MAY HAVE PROTECTED:</strong> ${opt.protected}</p>
+                  <p style="margin-bottom: 4px;"><strong>WHAT IT MAY HAVE RISKED:</strong> ${opt.risked}</p>
+                  <p style="margin-bottom: 0;"><strong>ANOTHER PERSPECTIVE:</strong> ${opt.perspective}</p>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }
+      return html;
+    }
+
+    /* CANVAS RADAR CHART */
+    function drawRadarChart() {
+      const canvas = document.getElementById('radarChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const scores = calculateTotalScores();
+      
+      const labels = [
+        'Professionalism', 'Judgement', 'Assertiveness', 'Boundaries',
+        'Relationship Awareness', 'Adaptability', 'Conflict Nav.', 'Ethical Courage'
+      ];
+      const data = [
+        scores.P, scores.J, scores.A, scores.B,
+        scores.RA, scores.CA, scores.CN, scores.EC
+      ];
+
+      const numAxes = labels.length;
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const radius = 120;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw concentric webs
+      const levels = 4;
+      for (let lvl = 1; lvl <= levels; lvl++) {
+        const r = (radius / levels) * lvl;
+        ctx.beginPath();
+        for (let i = 0; i < numAxes; i++) {
+          const angle = (Math.PI * 2 / numAxes) * i - Math.PI / 2;
+          const x = centerX + r * Math.cos(angle);
+          const y = centerY + r * Math.sin(angle);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = 'rgba(212, 175, 55, 0.15)';
+        ctx.stroke();
+      }
+
+      // Draw axes
+      for (let i = 0; i < numAxes; i++) {
+        const angle = (Math.PI * 2 / numAxes) * i - Math.PI / 2;
+        const x = centerX + radius * Math.cos(angle);
+        const y = centerY + radius * Math.sin(angle);
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.lineTo(x, y);
+        ctx.strokeStyle = 'rgba(212, 175, 55, 0.25)';
+        ctx.stroke();
+
+        // Labels
+        const lx = centerX + (radius + 22) * Math.cos(angle);
+        const ly = centerY + (radius + 22) * Math.sin(angle);
+        ctx.font = '10px Inter, sans-serif';
+        ctx.fillStyle = '#9ea7b8';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(labels[i], lx, ly);
+      }
+
+      // Draw data polygon
+      ctx.beginPath();
+      for (let i = 0; i < numAxes; i++) {
+        const val = data[i] / 100;
+        const angle = (Math.PI * 2 / numAxes) * i - Math.PI / 2;
+        const x = centerX + (radius * val) * Math.cos(angle);
+        const y = centerY + (radius * val) * Math.sin(angle);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(212, 175, 55, 0.35)';
+      ctx.fill();
+      ctx.strokeStyle = '#d4af37';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    /* COPY SUMMARY */
+    function copyReflectionSummary() {
+      const finalScores = calculateTotalScores();
+      const archetype = getArchetype(finalScores);
+
+      const summaryText = `
+NEXUS: THE GLASS OFFICE — WORKPLACE PROFILE SUMMARY
+Student: ${state.user.name} (${state.user.group || 'N/A'})
+Archetype: ${archetype.title}
+Desc: ${archetype.desc}
+
+DIMENSION SCORES (0-100):
+- Professionalism: ${finalScores.P}
+- Judgement: ${finalScores.J}
+- Assertiveness: ${finalScores.A}
+- Boundaries: ${finalScores.B}
+- Relationship Awareness: ${finalScores.RA}
+- Communication Adaptability: ${finalScores.CA}
+- Conflict Navigation: ${finalScores.CN}
+- Ethical Courage: ${finalScores.EC}
+
+REPLAY REFLECTION (Episode ${state.replayChange.ep || 1}):
+Revised Response: ${state.replayChange.newText || 'N/A'}
+Reasoning: ${state.replayChange.reason || 'N/A'}
+
+MY NEXUS NOTES:
+${state.nexusNotes || 'N/A'}
+
+PERSONAL ACTION STATEMENT:
+"In a difficult workplace situation, I want to remember to... ${state.actionStatement || 'N/A'}"
+      `.trim();
+
+      navigator.clipboard.writeText(summaryText).then(() => {
+        alert('Reflection summary copied to clipboard!');
+      }).catch(err => {
+        alert('Copy failed. You can print or save as PDF instead.');
+      });
+    }
+
+    // Initialize App
+    render();
+  </script>
+</body>
+</html>
